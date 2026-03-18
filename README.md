@@ -1,2 +1,2 @@
-# VSCM
-Visitor Sign In
+# VSCN
+Visitor Check In
