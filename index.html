@@ -1,596 +1,609 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>foster+freeman Visitor Kiosk</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#49ae34">
-    <link rel="apple-touch-icon" href="assets/newlogo.jpeg">
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    <script src="https://api.printnode.com/client/printnode.js"></script>
-    
-    <style>
-        :root {
-            --primary: #49ae34; 
-            --bg: #49ae34;
-            --text: #333;
-            --accent: #2c3e50;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            text-align: center;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 95vh;
-        }
-        h1 { font-size: 2.5em; margin-bottom: 5px; }
-        .view { display: none; width: 100%; max-width: 600px; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .active { display: block; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>foster+freeman Visitor Kiosk</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#49ae34">
+    <link rel="apple-touch-icon" href="assets/newlogo.jpeg">
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://api.printnode.com/client/printnode.js"></script>
+    
+    <style>
+        :root {
+            --primary: #49ae34; 
+            --bg: #49ae34;
+            --text: #333;
+            --accent: #2c3e50;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 95vh;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+        h1 { font-size: 2.5em; margin-bottom: 5px; }
+        .view { display: none; width: 100%; max-width: 600px; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .active { display: block; }
 
-        .safety-notice {
-            background: #fff3cd;
-            color: #856404;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 0.95em;
-            margin-bottom: 20px;
-            border: 1px solid #ffeeba;
-            font-weight: bold;
-        }
+        .safety-notice {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            margin-bottom: 20px;
+            border: 1px solid #ffeeba;
+            font-weight: bold;
+        }
 
-        .software-logo {
-            position: fixed;
-            bottom: 15px;
-            right: 15px;
-            width: 125px;
-            height: auto;
-            opacity: 0.9;
-            z-index: 100;
-            pointer-events: none;
-        }
+        .software-logo {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            width: 125px;
+            height: auto;
+            opacity: 0.9;
+            z-index: 100;
+            pointer-events: none;
+        }
 
-        #reader video {
-            transform: scaleX(-1);
-            -webkit-transform: scaleX(-1);
-        }
-        
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center;
-        }
-        .modal-content {
-            background: white; width: 90%; max-width: 550px; padding: 30px; border-radius: 12px;
-            max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-        .progress-text { font-size: 0.9em; color: #666; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .doc-viewer-container { text-align: center; overflow-y: auto; border: 1px solid #ddd; background: #fdfdfd; flex-grow: 1; margin-bottom: 20px; border-radius: 4px; }
-        .doc-viewer-container img { width: 100%; height: auto; display: block; }
+        #reader video {
+            transform: scaleX(-1);
+            -webkit-transform: scaleX(-1);
+        }
+        
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: white; width: 90%; max-width: 550px; padding: 30px; border-radius: 12px;
+            max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .progress-text { font-size: 0.9em; color: #666; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .doc-viewer-container { text-align: center; overflow-y: auto; border: 1px solid #ddd; background: #fdfdfd; flex-grow: 1; margin-bottom: 20px; border-radius: 4px; }
+        .doc-viewer-container img { width: 100%; height: auto; display: block; }
 
-        .btn { display: block; width: 100%; padding: 20px; margin: 15px 0; font-size: 1.5em; color: white; background-color: var(--primary); border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; }
-        .btn:hover { background-color: #3e942c; }
-        .btn-secondary { background-color: #6c757d; }
-        .btn-re-signin { background-color: var(--accent); }
-        .btn-half { width: 48%; display: inline-block; margin: 10px 1%; }
-        .btn-accept { background-color: #28a745; }
-        .btn-decline { background-color: #dc3545; }
+        .btn { display: block; width: 100%; padding: 20px; margin: 15px 0; font-size: 1.5em; color: white; background-color: var(--primary); border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .btn:hover { background-color: #3e942c; }
+        .btn-secondary { background-color: #6c757d; }
+        .btn-re-signin { background-color: var(--accent); }
+        .btn-half { width: 48%; display: inline-block; margin: 10px 1%; }
+        .btn-accept { background-color: #28a745; }
+        .btn-decline { background-color: #dc3545; }
 
-        input[type="text"] { width: 90%; padding: 15px; margin: 10px 0; font-size: 1.2em; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        canvas { border: 2px dashed #ccc; border-radius: 8px; width: 100%; height: 200px; touch-action: none; background: #fafafa; }
-        
-        #camera-container { position: relative; width: 100%; max-width: 250px; margin: 10px auto; overflow: hidden; border-radius: 10px; background: #000; }
-        #face-cam { width: 100%; display: block; transform: scaleX(-1); }
-        #face-guide {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 130px; height: 170px; border: 4px dashed #dc3545;
-            border-radius: 50%; box-sizing: border-box; pointer-events: none; transition: border-color 0.2s ease-in-out;
-            display: none;
-        }
+        input, textarea {
+            -webkit-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
+            user-select: auto;
+        }
+        input[type="text"] { width: 90%; padding: 15px; margin: 10px 0; font-size: 1.2em; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        canvas { border: 2px dashed #ccc; border-radius: 8px; width: 100%; height: 200px; touch-action: none; background: #fafafa; }
+        
+        #camera-container { position: relative; width: 100%; max-width: 250px; margin: 10px auto; overflow: hidden; border-radius: 10px; background: #000; }
+        #face-cam { width: 100%; display: block; transform: scaleX(-1); }
+        #face-guide {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 130px; height: 170px; border: 4px dashed #dc3545;
+            border-radius: 50%; box-sizing: border-box; pointer-events: none; transition: border-color 0.2s ease-in-out;
+            display: none;
+        }
 
-        /* Styles for the new extra documents screen */
-        .checkbox-group { text-align: left; max-width: 450px; margin: 15px auto; line-height: 2; font-size: 1.1em; }
-        .checkbox-group label { display: block; cursor: pointer; padding: 5px; border-radius: 5px; }
-        .checkbox-group label:hover { background-color: #f1f1f1; }
-        .checkbox-group input[type="checkbox"] { transform: scale(1.3); margin-right: 10px; cursor: pointer; }
-        textarea { width: 90%; padding: 15px; margin: 10px 0; font-size: 1.1em; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-family: inherit; resize: vertical; }
+        /* Styles for the new extra documents screen */
+        .checkbox-group { text-align: left; max-width: 450px; margin: 15px auto; line-height: 2; font-size: 1.1em; }
+        .checkbox-group label { display: block; cursor: pointer; padding: 5px; border-radius: 5px; }
+        .checkbox-group label:hover { background-color: #f1f1f1; }
+        .checkbox-group input[type="checkbox"] { transform: scale(1.3); margin-right: 10px; cursor: pointer; }
+        textarea { width: 90%; padding: 15px; margin: 10px 0; font-size: 1.1em; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-family: inherit; resize: vertical; }
 
-        @media print {
-            @page { size: 54mm 86mm; margin: 0; }
-            body { background: white; padding: 0; margin: 0; }
-            body * { visibility: hidden; }
-            #print-area, #print-area * { visibility: visible; }
-            #print-area { position: absolute; left: 0; top: 0; width: 54mm; height: 86mm; display: block !important; }
-        }
-    </style>
+        @media print {
+            @page { size: 54mm 86mm; margin: 0; }
+            body { background: white; padding: 0; margin: 0; }
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area { position: absolute; left: 0; top: 0; width: 54mm; height: 86mm; display: block !important; }
+        }
+    </style>
 </head>
 <body>
 
-    <img src="assets/software-logo.png" alt="Design Logo" class="software-logo">
+    <img src="assets/software-logo.png" alt="Design Logo" class="software-logo">
 
-    <div id="home-screen" class="view active">
-        <img src="assets/newlogo.jpeg" alt="Foster + Freeman Logo" style="width: 250px; margin-bottom: 5px; height: auto;">
-        <h1>Welcome</h1>
-        <div class="safety-notice">⚠️ Signing IN and OUT is mandatory for evacuation procedures.</div>
-        <button class="btn" onclick="showScreen('type-screen')">Sign In</button>
-        <button class="btn btn-secondary" onclick="startScanner('SignOut')">Sign Out</button>
-        <button class="btn btn-re-signin" style="margin-top: 40px;" onclick="startScanner('ReSignIn')">🔄 Re-Sign In (Scan Badge)</button>
-    </div>
+    <div id="home-screen" class="view active">
+        <img src="assets/newlogo.jpeg" alt="Foster + Freeman Logo" style="width: 250px; margin-bottom: 5px; height: auto;">
+        <h1>Welcome</h1>
+        <div class="safety-notice">⚠️ Signing IN and OUT is mandatory for evacuation procedures.</div>
+        <button class="btn" onclick="showScreen('type-screen')">Sign In</button>
+        <button class="btn btn-secondary" onclick="startScanner('SignOut')">Sign Out</button>
+        <button class="btn btn-re-signin" style="margin-top: 40px;" onclick="startScanner('ReSignIn')">🔄 Re-Sign In (Scan Badge)</button>
+    </div>
 
-    <div id="type-screen" class="view">
-        <h2>Who are you visiting as?</h2>
-        <button class="btn" onclick="startForm('Visitor')">Visitor</button>
-        <button class="btn" onclick="startForm('Contractor')">Contractor</button>
-        <button class="btn btn-secondary" onclick="showScreen('home-screen')">Back</button>
-    </div>
+    <div id="type-screen" class="view">
+        <h2>Who are you visiting as?</h2>
+        <button class="btn" onclick="startForm('Visitor')">Visitor</button>
+        <button class="btn" onclick="startForm('Contractor')">Contractor</button>
+        <button class="btn btn-secondary" onclick="showScreen('home-screen')">Back</button>
+    </div>
 
-    <div id="form-screen" class="view">
-        <h2 id="form-title">Sign In</h2>
-        <input type="text" id="name" placeholder="Full Name" required>
-        <input type="text" id="company" placeholder="Company Name" required>
-        <input type="text" id="vehicle" placeholder="Vehicle Registration">
-        <input type="text" id="contact" placeholder="F+F Contact Person" required>
-        
-        <button class="btn" onclick="submitDetails()">Next</button>
-        <button class="btn btn-secondary" onclick="showScreen('type-screen')">Cancel</button>
-    </div>
+    <div id="form-screen" class="view">
+        <h2 id="form-title">Sign In</h2>
+        <input type="text" id="name" placeholder="Full Name" required>
+        <input type="text" id="company" placeholder="Company Name" required>
+        <input type="text" id="vehicle" placeholder="Vehicle Registration">
+        <input type="text" id="contact" placeholder="F+F Contact Person" required>
+        
+        <button class="btn" onclick="submitDetails()">Next</button>
+        <button class="btn btn-secondary" onclick="showScreen('type-screen')">Cancel</button>
+    </div>
 
-    <div id="document-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div id="doc-progress" class="progress-text">Document 1 of 3</div>
-            <h2 id="doc-title" style="margin-top:5px; color: var(--accent);">Document Title</h2>
-            <div id="doc-viewer" class="doc-viewer-container">
-                <img id="doc-image" src="" alt="Induction Document">
-            </div>
-            <div style="display: flex; justify-content: space-between;">
-                <button class="btn btn-half btn-decline" onclick="declineTerms()">Decline</button>
-                <button class="btn btn-half btn-accept" onclick="acceptCurrentDocument()">I Accept</button>
-            </div>
-        </div>
-    </div>
+    <div id="document-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div id="doc-progress" class="progress-text">Document 1 of 3</div>
+            <h2 id="doc-title" style="margin-top:5px; color: var(--accent);">Document Title</h2>
+            <div id="doc-viewer" class="doc-viewer-container">
+                <img id="doc-image" src="" alt="Induction Document">
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <button class="btn btn-half btn-decline" onclick="declineTerms()">Decline</button>
+                <button class="btn btn-half btn-accept" onclick="acceptCurrentDocument()">I Accept</button>
+            </div>
+        </div>
+    </div>
 
-    <div id="extra-docs-screen" class="view">
-        <h2>Additional Tasks</h2>
-        <p>Please select any specific permits required for your work today (Select all that apply):</p>
-        <div class="checkbox-group">
-            <label><input type="checkbox" class="extra-chk" id="chk-ra078"> 1. RA078 - Roof Working</label>
-            <label><input type="checkbox" class="extra-chk" id="chk-ff110"> 2. FF110 - Permit to Work - Confined Spaces</label>
-            <label><input type="checkbox" class="extra-chk" id="chk-ff111"> 3. FF111 - Permit to Work - Hot Works</label>
-            <label><input type="checkbox" class="extra-chk" id="chk-ff113"> 4. FF113 - Permit to Work - Working at Height</label>
-        </div>
-        <textarea id="work-description" placeholder="Description of Work (Required)..." rows="3" required></textarea>
-        <button class="btn" onclick="submitExtraDocs()">Next</button>
-    </div>
+    <div id="extra-docs-screen" class="view">
+        <h2>Additional Tasks</h2>
+        <p>Please select any specific permits required for your work today (Select all that apply):</p>
+        <div class="checkbox-group">
+            <label><input type="checkbox" class="extra-chk" id="chk-ra078"> 1. RA078 - Roof Working</label>
+            <label><input type="checkbox" class="extra-chk" id="chk-ff110"> 2. FF110 - Permit to Work - Confined Spaces</label>
+            <label><input type="checkbox" class="extra-chk" id="chk-ff111"> 3. FF111 - Permit to Work - Hot Works</label>
+            <label><input type="checkbox" class="extra-chk" id="chk-ff113"> 4. FF113 - Permit to Work - Working at Height</label>
+        </div>
+        <textarea id="work-description" placeholder="Description of Work (Required)..." rows="3" required></textarea>
+        <button class="btn" onclick="submitExtraDocs()">Next</button>
+    </div>
 
-    <div id="signature-screen" class="view">
-        <h2>Signature</h2>
-        <div id="camera-container">
-            <video id="face-cam" autoplay playsinline></video>
-            <div id="face-guide"></div>
-        </div>
-        <p id="sig-welcome" style="font-size: 1.2em;">Please sign below to complete your entry:</p>
-        <canvas id="signature-pad"></canvas>
-        <button class="btn btn-secondary" style="padding: 10px; font-size: 1em; margin-top: 10px;" onclick="signaturePad.clear()">Clear Signature</button>
-        <button class="btn" onclick="finalizeSignIn()">Sign In</button>
-    </div>
+    <div id="signature-screen" class="view">
+        <h2>Signature</h2>
+        <div id="camera-container">
+            <video id="face-cam" autoplay playsinline></video>
+            <div id="face-guide"></div>
+        </div>
+        <p id="sig-welcome" style="font-size: 1.2em;">Please sign below to complete your entry:</p>
+        <canvas id="signature-pad"></canvas>
+        <button class="btn btn-secondary" style="padding: 10px; font-size: 1em; margin-top: 10px;" onclick="signaturePad.clear()">Clear Signature</button>
+        <button class="btn" onclick="finalizeSignIn()">Sign In</button>
+    </div>
 
-    <div id="decline-screen" class="view">
-        <h2 style="color: #dc3545;">Assistance Required</h2>
-        <p>You have declined the terms for: <br><strong id="declined-doc-name"></strong></p>
-        <p style="font-size: 1.2em; margin-top: 20px;">Please wait here.</p>
-        <p>A member of staff has been notified and will be with you shortly to assist.</p>
-    </div>
+    <div id="decline-screen" class="view">
+        <h2 style="color: #dc3545;">Assistance Required</h2>
+        <p>You have declined the terms for: <br><strong id="declined-doc-name"></strong></p>
+        <p style="font-size: 1.2em; margin-top: 20px;">Please wait here.</p>
+        <p>A member of staff has been notified and will be with you shortly to assist.</p>
+    </div>
 
-    <div id="scan-screen" class="view">
-        <h2 id="scan-title">Scan Badge</h2>
-        <div id="safety-reminder-out" class="safety-notice" style="display:none;">Please scan out so you are accounted for in an evacuation.</div>
-        <p id="scan-subtitle">Hold your badge QR code up to the camera</p>
-        <div id="reader" style="width: 100%; max-width: 400px; margin: auto; border-radius: 10px; overflow: hidden; background: #000;"></div>
-        <div style="margin-top: 20px;">
-            <p>OR enter name manually:</p>
-            <input type="text" id="scan-manual-name" placeholder="Enter Full Name">
-            <button class="btn" onclick="handleScanResult(document.getElementById('scan-manual-name').value)">Confirm Sign Out</button>
-        </div>
-        <button class="btn btn-secondary" onclick="stopScanner(); showScreen('home-screen');">Back</button>
-    </div>
+    <div id="scan-screen" class="view">
+        <h2 id="scan-title">Scan Badge</h2>
+        <div id="safety-reminder-out" class="safety-notice" style="display:none;">Please scan out so you are accounted for in an evacuation.</div>
+        <p id="scan-subtitle">Hold your badge QR code up to the camera</p>
+        <div id="reader" style="width: 100%; max-width: 400px; margin: auto; border-radius: 10px; overflow: hidden; background: #000;"></div>
+        <div style="margin-top: 20px;">
+            <p>OR enter name manually:</p>
+            <input type="text" id="scan-manual-name" placeholder="Enter Full Name">
+            <button class="btn" onclick="handleScanResult(document.getElementById('scan-manual-name').value)">Confirm Sign Out</button>
+        </div>
+        <button class="btn btn-secondary" onclick="stopScanner(); showScreen('home-screen');">Back</button>
+    </div>
 
-    <div id="thankyou-screen" class="view">
-        <h2 id="thankyou-msg">Thank you!</h2>
-        <p>Returning to home screen shortly...</p>
-    </div>
+    <div id="thankyou-screen" class="view">
+        <h2 id="thankyou-msg">Thank you!</h2>
+        <p>Returning to home screen shortly...</p>
+    </div>
 
-    <div id="print-area" style="display: none;"><div id="lbl-qr"></div></div>
+    <div id="print-area" style="display: none;"><div id="lbl-qr"></div></div>
 
-    <script>
-        const PRINTNODE_API_KEY = 'o3yoiUKVBTHyVoHbN7TmGvu55J9LOIq6HuWggf7ZGio'; 
-        const PRINTNODE_PRINTER_ID = '75288319';    
+    <script>
+        document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
 
-        let currentVisitorType = '';
-        let html5QrCode;
-        let currentDocIndex = 0;
-        let scanMode = ''; 
-        let isReturningVisitor = false;
-        let visitorData = {}; 
-        const canvas = document.getElementById('signature-pad');
-        const signaturePad = new SignaturePad(canvas);
+        const PRINTNODE_API_KEY = 'o3yoiUKVBTHyVoHbN7TmGvu55J9LOIq6HuWggf7ZGio'; 
+        const PRINTNODE_PRINTER_ID = '75288319';    
 
-        const CLOUD_URL = "https://script.google.com/macros/s/AKfycbz2TEp65W4qwf88bpQCnTpk0eTto79QkVEnmxWGDrpc7Vs8mD5Fn4IY_y4QVk_gbKwC/exec"; 
+        let currentVisitorType = '';
+        let html5QrCode;
+        let currentDocIndex = 0;
+        let scanMode = ''; 
+        let isReturningVisitor = false;
+        let visitorData = {}; 
+        const canvas = document.getElementById('signature-pad');
+        const signaturePad = new SignaturePad(canvas);
 
-        const contractorDocuments = [
-            { title: "1. FF156 Contractors Rules", file: "assets/FF156   Contractors Rules v2.0.jpg", text: "Contractor has read and accepted the FF156 Contractors Rules." },
-            { title: "2. FF157 Permit to Work", file: "assets/FF157   Permit to Work v2.0.jpg", text: "Contractor has read and accepted the FF157 Permit to Work." },
-            { title: "3. FF158 Contractor H&S Induction Form", file: "assets/FF158   Contractor H&S Induction Form.jpg", text: "Contractor has read and accepted the FF158 Contractor H&S Induction Form." },
-            { title: "4. RA069 SITE RA F&F", file: "assets/RA069   SITE RA F&F v8.0.jpg", text: "Contractor has read and accepted the RA069 SITE RA F&F." }
-        ];
+        const CLOUD_URL = "https://script.google.com/macros/s/AKfycbz2TEp65W4qwf88bpQCnTpk0eTto79QkVEnmxWGDrpc7Vs8mD5Fn4IY_y4QVk_gbKwC/exec"; 
 
-        // NEW: Variables for handling the extra documents screen
-        let isReviewingExtra = false;
-        let selectedExtraDocs = [];
-        let extraDocIndex = 0;
+        const contractorDocuments = [
+            { title: "1. FF156 Contractors Rules", file: "assets/FF156   Contractors Rules v2.0.jpg", text: "Contractor has read and accepted the FF156 Contractors Rules." },
+            { title: "2. FF157 Permit to Work", file: "assets/FF157   Permit to Work v2.0.jpg", text: "Contractor has read and accepted the FF157 Permit to Work." },
+            { title: "3. FF158 Contractor H&S Induction Form", file: "assets/FF158   Contractor H&S Induction Form.jpg", text: "Contractor has read and accepted the FF158 Contractor H&S Induction Form." },
+            { title: "4. RA069 SITE RA F&F", file: "assets/RA069   SITE RA F&F v8.0.jpg", text: "Contractor has read and accepted the RA069 SITE RA F&F." }
+        ];
 
-        function playPing() {
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-                oscillator.type = 'sine'; oscillator.frequency.setValueAtTime(1046.50, audioCtx.currentTime); 
-                oscillator.frequency.exponentialRampToValueAtTime(2000, audioCtx.currentTime + 0.1);
-                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-                oscillator.connect(gainNode); gainNode.connect(audioCtx.destination);
-                oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.2);
-            } catch(e) { console.log("Audio blocked."); }
-        }
+        // NEW: Variables for handling the extra documents screen
+        let isReviewingExtra = false;
+        let selectedExtraDocs = [];
+        let extraDocIndex = 0;
 
-        function showScreen(screenId) {
-            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-            document.getElementById('document-modal').style.display = 'none';
-            
-            if (screenId === 'signature-screen') {
-                const faceGuide = document.getElementById('face-guide');
-                faceGuide.style.display = (currentVisitorType === 'Contractor') ? 'block' : 'none';
-                faceGuide.style.borderColor = '#dc3545'; // Reset border to red upon loading screen
-                
-                navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
-                    .then(stream => { document.getElementById('face-cam').srcObject = stream; })
-                    .catch(err => console.log("Camera blocked."));
-            } else {
-                const video = document.getElementById('face-cam');
-                if (video && video.srcObject) {
-                    video.srcObject.getTracks().forEach(track => track.stop());
-                    video.srcObject = null;
-                }
-            }
-        }
+        function playPing() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.type = 'sine'; oscillator.frequency.setValueAtTime(1046.50, audioCtx.currentTime); 
+                oscillator.frequency.exponentialRampToValueAtTime(2000, audioCtx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                oscillator.connect(gainNode); gainNode.connect(audioCtx.destination);
+                oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.2);
+            } catch(e) { console.log("Audio blocked."); }
+        }
 
-        function resizeCanvas() {
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = canvas.offsetHeight * ratio;
-            canvas.getContext("2d").scale(ratio, ratio);
-            signaturePad.clear(); 
-        }
-        window.onresize = resizeCanvas;
+        function showScreen(screenId) {
+            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            document.getElementById('document-modal').style.display = 'none';
+            
+            if (screenId === 'signature-screen') {
+                const faceGuide = document.getElementById('face-guide');
+                faceGuide.style.display = (currentVisitorType === 'Contractor') ? 'block' : 'none';
+                faceGuide.style.borderColor = '#dc3545'; // Reset border to red upon loading screen
+                
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+                    .then(stream => { document.getElementById('face-cam').srcObject = stream; })
+                    .catch(err => console.log("Camera blocked."));
+            } else {
+                const video = document.getElementById('face-cam');
+                if (video && video.srcObject) {
+                    video.srcObject.getTracks().forEach(track => track.stop());
+                    video.srcObject = null;
+                }
+            }
+        }
 
-        function startForm(type) {
-            isReturningVisitor = false;
-            currentVisitorType = type;
-            isReviewingExtra = false;
-            selectedExtraDocs = [];
-            document.getElementById('form-title').innerText = type + ' Sign In';
-            document.getElementById('name').value = ''; document.getElementById('company').value = '';
-            document.getElementById('vehicle').value = ''; document.getElementById('contact').value = '';
-            signaturePad.clear();
-            showScreen('form-screen');
-        }
+        function resizeCanvas() {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext("2d").scale(ratio, ratio);
+            signaturePad.clear(); 
+        }
+        window.onresize = resizeCanvas;
 
-        function submitDetails() {
-            const name = document.getElementById('name').value.trim();
-            const company = document.getElementById('company').value.trim();
-            const contact = document.getElementById('contact').value.trim();
-            if(!name || !company || !contact) { alert("Please fill in all fields."); return; }
+        function startForm(type) {
+            isReturningVisitor = false;
+            currentVisitorType = type;
+            isReviewingExtra = false;
+            selectedExtraDocs = [];
+            document.getElementById('form-title').innerText = type + ' Sign In';
+            document.getElementById('name').value = ''; document.getElementById('company').value = '';
+            document.getElementById('vehicle').value = ''; document.getElementById('contact').value = '';
+            signaturePad.clear();
+            showScreen('form-screen');
+        }
 
-            if (currentVisitorType === 'Contractor') {
-                currentDocIndex = 0; loadDocument();
-            } else {
-                showScreen('signature-screen'); setTimeout(resizeCanvas, 100);
-            }
-        }
+        function submitDetails() {
+            const name = document.getElementById('name').value.trim();
+            const company = document.getElementById('company').value.trim();
+            const contact = document.getElementById('contact').value.trim();
+            if(!name || !company || !contact) { alert("Please fill in all fields."); return; }
 
-        function loadDocument() {
-            document.getElementById('doc-progress').innerText = `Document ${currentDocIndex + 1} of ${contractorDocuments.length}`;
-            document.getElementById('doc-title').innerText = contractorDocuments[currentDocIndex].title;
-            document.getElementById('doc-image').src = contractorDocuments[currentDocIndex].file;
-            document.getElementById('document-modal').style.display = 'flex';
-            document.getElementById('doc-viewer').scrollTop = 0;
-        }
+            if (currentVisitorType === 'Contractor') {
+                currentDocIndex = 0; loadDocument();
+            } else {
+                showScreen('signature-screen'); setTimeout(resizeCanvas, 100);
+            }
+        }
 
-        function acceptCurrentDocument() {
-            if (!isReviewingExtra) {
-                // Phase 1: Standard Documents
-                currentDocIndex++;
-                if (currentDocIndex < contractorDocuments.length) { 
-                    loadDocument(); 
-                } else {
-                    document.getElementById('document-modal').style.display = 'none';
-                    // Show extra documents selection screen
-                    document.getElementById('work-description').value = '';
-                    document.querySelectorAll('.extra-chk').forEach(cb => cb.checked = false);
-                    showScreen('extra-docs-screen');
-                }
-            } else {
-                // Phase 2: Extra Selected Documents
-                extraDocIndex++;
-                if (extraDocIndex < selectedExtraDocs.length) { 
-                    loadExtraDocument(); 
-                } else {
-                    document.getElementById('document-modal').style.display = 'none';
-                    showScreen('signature-screen'); setTimeout(resizeCanvas, 100);
-                }
-            }
-        }
+        function loadDocument() {
+            document.getElementById('doc-progress').innerText = `Document ${currentDocIndex + 1} of ${contractorDocuments.length}`;
+            document.getElementById('doc-title').innerText = contractorDocuments[currentDocIndex].title;
+            document.getElementById('doc-image').src = contractorDocuments[currentDocIndex].file;
+            document.getElementById('document-modal').style.display = 'flex';
+            document.getElementById('doc-viewer').scrollTop = 0;
+        }
 
-        // NEW: Submit the checkboxes and begin showing the extra selected files
-        function submitExtraDocs() {
-            // Require description of work before proceeding
-            const workDescription = document.getElementById('work-description').value.trim();
-            if (!workDescription) {
-                alert("Please enter a Description of Work before proceeding.");
-                return;
-            }
+        function acceptCurrentDocument() {
+            if (!isReviewingExtra) {
+                // Phase 1: Standard Documents
+                currentDocIndex++;
+                if (currentDocIndex < contractorDocuments.length) { 
+                    loadDocument(); 
+                } else {
+                    document.getElementById('document-modal').style.display = 'none';
+                    // Show extra documents selection screen
+                    document.getElementById('work-description').value = '';
+                    document.querySelectorAll('.extra-chk').forEach(cb => cb.checked = false);
+                    showScreen('extra-docs-screen');
+                }
+            } else {
+                // Phase 2: Extra Selected Documents
+                extraDocIndex++;
+                if (extraDocIndex < selectedExtraDocs.length) { 
+                    loadExtraDocument(); 
+                } else {
+                    document.getElementById('document-modal').style.display = 'none';
+                    showScreen('signature-screen'); setTimeout(resizeCanvas, 100);
+                }
+            }
+        }
 
-            selectedExtraDocs = [];
-            
-            if (document.getElementById('chk-ra078').checked) {
-                selectedExtraDocs.push({ title: "RA078 - Roof Working", file: "assets/RA078 - Roof Working.jpg", text: "Contractor has read and accepted RA078 - Roof Working." });
-            }
-            if (document.getElementById('chk-ff110').checked) {
-                selectedExtraDocs.push({ title: "FF110 - Permit to Work - Confined Spaces", file: "assets/FF110 - Permit to Work - Confined Spaces.jpg", text: "Contractor has read and accepted FF110 - Permit to Work - Confined Spaces." });
-            }
-            if (document.getElementById('chk-ff111').checked) {
-                selectedExtraDocs.push({ title: "FF111 - Permit to Work - Hot Works", file: "assets/FF111 - Permit to Work - Hot Works.jpg", text: "Contractor has read and accepted FF111 - Permit to Work - Hot Works." });
-            }
-            if (document.getElementById('chk-ff113').checked) {
-                selectedExtraDocs.push({ title: "FF113 - Permit to Work - Working at Height", file: "assets/FF113 - Permit to Work - Working at Height.jpg", text: "Contractor has read and accepted FF113 - Permit to Work - Working at Height." });
-            }
+        // NEW: Submit the checkboxes and begin showing the extra selected files
+        function submitExtraDocs() {
+            // Require description of work before proceeding
+            const workDescription = document.getElementById('work-description').value.trim();
+            if (!workDescription) {
+                alert("Please enter a Description of Work before proceeding.");
+                return;
+            }
 
-            if (selectedExtraDocs.length > 0) {
-                isReviewingExtra = true;
-                extraDocIndex = 0;
-                loadExtraDocument();
-            } else {
-                showScreen('signature-screen'); setTimeout(resizeCanvas, 100);
-            }
-        }
+            selectedExtraDocs = [];
+            
+            if (document.getElementById('chk-ra078').checked) {
+                selectedExtraDocs.push({ title: "RA078 - Roof Working", file: "assets/RA078 - Roof Working.jpg", text: "Contractor has read and accepted RA078 - Roof Working." });
+            }
+            if (document.getElementById('chk-ff110').checked) {
+                selectedExtraDocs.push({ title: "FF110 - Permit to Work - Confined Spaces", file: "assets/FF110 - Permit to Work - Confined Spaces.jpg", text: "Contractor has read and accepted FF110 - Permit to Work - Confined Spaces." });
+            }
+            if (document.getElementById('chk-ff111').checked) {
+                selectedExtraDocs.push({ title: "FF111 - Permit to Work - Hot Works", file: "assets/FF111 - Permit to Work - Hot Works.jpg", text: "Contractor has read and accepted FF111 - Permit to Work - Hot Works." });
+            }
+            if (document.getElementById('chk-ff113').checked) {
+                selectedExtraDocs.push({ title: "FF113 - Permit to Work - Working at Height", file: "assets/FF113 - Permit to Work - Working at Height.jpg", text: "Contractor has read and accepted FF113 - Permit to Work - Working at Height." });
+            }
 
-        function loadExtraDocument() {
-            document.getElementById('doc-progress').innerText = `Additional Document ${extraDocIndex + 1} of ${selectedExtraDocs.length}`;
-            document.getElementById('doc-title').innerText = selectedExtraDocs[extraDocIndex].title;
-            document.getElementById('doc-image').src = selectedExtraDocs[extraDocIndex].file;
-            document.getElementById('document-modal').style.display = 'flex';
-            document.getElementById('doc-viewer').scrollTop = 0;
-        }
+            if (selectedExtraDocs.length > 0) {
+                isReviewingExtra = true;
+                extraDocIndex = 0;
+                loadExtraDocument();
+            } else {
+                showScreen('signature-screen'); setTimeout(resizeCanvas, 100);
+            }
+        }
 
-        function declineTerms() {
-            const name = document.getElementById('name').value.trim();
-            // Determine which list the declined doc belongs to
-            const declinedTitle = !isReviewingExtra ? contractorDocuments[currentDocIndex].title : selectedExtraDocs[extraDocIndex].title;
-            
-            document.getElementById('document-modal').style.display = 'none';
-            document.getElementById('declined-doc-name').innerText = declinedTitle;
-            showScreen('decline-screen');
-            sendToCloud({ name: name, declinedDoc: declinedTitle }, null, "DeclineNotify");
-            setTimeout(() => { showScreen('home-screen'); }, 15000); 
-        }
+        function loadExtraDocument() {
+            document.getElementById('doc-progress').innerText = `Additional Document ${extraDocIndex + 1} of ${selectedExtraDocs.length}`;
+            document.getElementById('doc-title').innerText = selectedExtraDocs[extraDocIndex].title;
+            document.getElementById('doc-image').src = selectedExtraDocs[extraDocIndex].file;
+            document.getElementById('document-modal').style.display = 'flex';
+            document.getElementById('doc-viewer').scrollTop = 0;
+        }
 
-        function getQRCodeDataURL() {
-            const qrCanvas = document.querySelector('#lbl-qr canvas');
-            return qrCanvas ? qrCanvas.toDataURL("image/png") : null;
-        }
+        function declineTerms() {
+            const name = document.getElementById('name').value.trim();
+            // Determine which list the declined doc belongs to
+            const declinedTitle = !isReviewingExtra ? contractorDocuments[currentDocIndex].title : selectedExtraDocs[extraDocIndex].title;
+            
+            document.getElementById('document-modal').style.display = 'none';
+            document.getElementById('declined-doc-name').innerText = declinedTitle;
+            showScreen('decline-screen');
+            sendToCloud({ name: name, declinedDoc: declinedTitle }, null, "DeclineNotify");
+            setTimeout(() => { showScreen('home-screen'); }, 15000); 
+        }
 
-        // UPDATED: 42mm Layout with Tight Spacing
-        async function sendToPrintNode(vData) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ unit: 'mm', format: [54, 86] });
-            
-            // 1. Logo (At the very top)
-            const logo = new Image();
-            logo.src = 'assets/newlogo.jpeg';
-            doc.addImage(logo, 'JPEG', 6, 2, 42, 12);
+        function getQRCodeDataURL() {
+            const qrCanvas = document.querySelector('#lbl-qr canvas');
+            return qrCanvas ? qrCanvas.toDataURL("image/png") : null;
+        }
 
-            // 2. Text (Tightened Y coordinates)
-            doc.setFontSize(14);
-            doc.text(vData.name.toUpperCase(), 27, 20, { align: 'center' });
-            doc.setFontSize(10);
-            doc.text(vData.company, 27, 26, { align: 'center' });
+        // UPDATED: 42mm Layout with Tight Spacing
+        async function sendToPrintNode(vData) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ unit: 'mm', format: [54, 86] });
+            
+            // 1. Logo (At the very top)
+            const logo = new Image();
+            logo.src = 'assets/newlogo.jpeg';
+            doc.addImage(logo, 'JPEG', 6, 2, 42, 12);
 
-            // 3. Large 42mm QR Code (Centered X=6)
-            const qrData = getQRCodeDataURL();
-            if (qrData) {
-                doc.addImage(qrData, 'PNG', 6, 28, 42, 42);
-            }
+            // 2. Text (Tightened Y coordinates)
+            doc.setFontSize(14);
+            doc.text(vData.name.toUpperCase(), 27, 20, { align: 'center' });
+            doc.setFontSize(10);
+            doc.text(vData.company, 27, 26, { align: 'center' });
 
-            // 4. Footer (Shifted to bottom edge)
-            doc.setLineWidth(0.5);
-            doc.line(5, 74, 49, 74);
-            doc.setFontSize(10);
-            doc.text("F+F " + vData.type.toUpperCase(), 27, 81, { align: 'center' });
+            // 3. Large 42mm QR Code (Centered X=6)
+            const qrData = getQRCodeDataURL();
+            if (qrData) {
+                doc.addImage(qrData, 'PNG', 6, 28, 42, 42);
+            }
 
-            const base64PDF = doc.output('datauristring').split(',')[1];
+            // 4. Footer (Shifted to bottom edge)
+            doc.setLineWidth(0.5);
+            doc.line(5, 74, 49, 74);
+            doc.setFontSize(10);
+            doc.text("F+F " + vData.type.toUpperCase(), 27, 81, { align: 'center' });
 
-            try {
-                await fetch('https://api.printnode.com/printjobs', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Basic ' + btoa(PRINTNODE_API_KEY + ':')
-                    },
-                    body: JSON.stringify({
-                        "printerId": PRINTNODE_PRINTER_ID,
-                        "title": "Badge: " + vData.name,
-                        "contentType": "pdf_base64",
-                        "content": base64PDF,
-                        "source": "F+F Kiosk"
-                    })
-                });
-            } catch (err) {
-                console.error("PrintNode Error:", err);
-                window.print();
-            }
-        }
+            const base64PDF = doc.output('datauristring').split(',')[1];
 
-        async function generateContractorPDF(data) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const now = new Date();
-            const timestamp = now.toLocaleDateString() + " " + now.toLocaleTimeString();
-            const logoImg = new Image();
-            logoImg.src = 'assets/newlogo.jpeg';
-            
-            // NEW: Combine standard and extra documents for the PDF
-            const allDocsToSign = contractorDocuments.concat(selectedExtraDocs || []);
+            try {
+                await fetch('https://api.printnode.com/printjobs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Basic ' + btoa(PRINTNODE_API_KEY + ':')
+                    },
+                    body: JSON.stringify({
+                        "printerId": PRINTNODE_PRINTER_ID,
+                        "title": "Badge: " + vData.name,
+                        "contentType": "pdf_base64",
+                        "content": base64PDF,
+                        "source": "F+F Kiosk"
+                    })
+                });
+            } catch (err) {
+                console.error("PrintNode Error:", err);
+                window.print();
+            }
+        }
 
-            allDocsToSign.forEach((docItem, index) => {
-                if (index > 0) doc.addPage();
-                doc.addImage(logoImg, 'PNG', 85, 5, 40, 15); 
-                doc.setFontSize(18);
-                doc.text("Foster + Freeman Contractor Agreement", 105, 30, { align: "center" });
-                if (data.photoData) doc.addImage(data.photoData, 'JPEG', 160, 40, 30, 40);
-                
-                doc.setFontSize(14); 
-                doc.text(docItem.title, 20, 45);
-                
-                doc.setFontSize(11);
-                const splitText = doc.splitTextToSize(docItem.text, 130);
-                doc.text(splitText, 20, 55);
+        async function generateContractorPDF(data) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const now = new Date();
+            const timestamp = now.toLocaleDateString() + " " + now.toLocaleTimeString();
+            const logoImg = new Image();
+            logoImg.src = 'assets/newlogo.jpeg';
+            
+            // NEW: Combine standard and extra documents for the PDF
+            const allDocsToSign = contractorDocuments.concat(selectedExtraDocs || []);
 
-                // Print the description of work above the signature if one was provided
-                if (data.workDescription) {
-                    doc.setFontSize(11);
-                    doc.text("Description of Work:", 20, 165);
-                    doc.setFontSize(10);
-                    const splitDesc = doc.splitTextToSize(data.workDescription, 130);
-                    doc.text(splitDesc, 20, 172);
-                }
+            allDocsToSign.forEach((docItem, index) => {
+                if (index > 0) doc.addPage();
+                doc.addImage(logoImg, 'PNG', 85, 5, 40, 15); 
+                doc.setFontSize(18);
+                doc.text("Foster + Freeman Contractor Agreement", 105, 30, { align: "center" });
+                if (data.photoData) doc.addImage(data.photoData, 'JPEG', 160, 40, 30, 40);
+                
+                doc.setFontSize(14); 
+                doc.text(docItem.title, 20, 45);
+                
+                doc.setFontSize(11);
+                const splitText = doc.splitTextToSize(docItem.text, 130);
+                doc.text(splitText, 20, 55);
 
-                doc.setFontSize(10);
-                doc.text(`Signed by: ${data.name} | Date: ${timestamp}`, 20, 190);
-                doc.addImage(data.signature, 'PNG', 130, 185, 50, 20); 
-            });
-            return doc.output('datauristring').split(',')[1]; 
-        }
+                // Print the description of work above the signature if one was provided
+                if (data.workDescription) {
+                    doc.setFontSize(11);
+                    doc.text("Description of Work:", 20, 165);
+                    doc.setFontSize(10);
+                    const splitDesc = doc.splitTextToSize(data.workDescription, 130);
+                    doc.text(splitDesc, 20, 172);
+                }
 
-        async function sendToCloud(data, pdfBase64, action = "SignIn") {
-            try {
-                await fetch(CLOUD_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ ...data, action, pdf: pdfBase64 }) });
-            } catch (err) { console.error("Cloud Error:", err); }
-        }
+                doc.setFontSize(10);
+                doc.text(`Signed by: ${data.name} | Date: ${timestamp}`, 20, 190);
+                doc.addImage(data.signature, 'PNG', 130, 185, 50, 20); 
+            });
+            return doc.output('datauristring').split(',')[1]; 
+        }
 
-        async function finalizeSignIn() {
-            if(signaturePad.isEmpty()) return alert("Please sign the pad.");
-            
-            if (!isReturningVisitor) {
-                visitorData = {
-                    type: currentVisitorType,
-                    name: document.getElementById('name').value.trim(),
-                    company: document.getElementById('company').value.trim(),
-                    vehicle: document.getElementById('vehicle').value.trim(),
-                    contact: document.getElementById('contact').value.trim(),
-                    workDescription: document.getElementById('work-description') ? document.getElementById('work-description').value.trim() : ""
-                };
-            }
-            
-            visitorData.signature = signaturePad.toDataURL(); 
+        async function sendToCloud(data, pdfBase64, action = "SignIn") {
+            try {
+                await fetch(CLOUD_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ ...data, action, pdf: pdfBase64 }) });
+            } catch (err) { console.error("Cloud Error:", err); }
+        }
 
-            if (currentVisitorType === 'Contractor') {
-                const video = document.getElementById('face-cam');
-                if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                    const snapCanvas = document.createElement('canvas');
-                    snapCanvas.width = video.videoWidth; snapCanvas.height = video.videoHeight;
-                    const ctx = snapCanvas.getContext('2d');
-                    ctx.translate(snapCanvas.width, 0); ctx.scale(-1, 1);
-                    ctx.drawImage(video, 0, 0, snapCanvas.width, snapCanvas.height);
-                    visitorData.photoData = snapCanvas.toDataURL('image/jpeg', 0.8);
-                    
-                    // Turn outline green to signal success, await for 500ms to allow user to see it
-                    document.getElementById('face-guide').style.borderColor = '#28a745';
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                }
-            }
+        async function finalizeSignIn() {
+            if(signaturePad.isEmpty()) return alert("Please sign the pad.");
+            
+            if (!isReturningVisitor) {
+                visitorData = {
+                    type: currentVisitorType,
+                    name: document.getElementById('name').value.trim(),
+                    company: document.getElementById('company').value.trim(),
+                    vehicle: document.getElementById('vehicle').value.trim(),
+                    contact: document.getElementById('contact').value.trim(),
+                    workDescription: document.getElementById('work-description') ? document.getElementById('work-description').value.trim() : ""
+                };
+            }
+            
+            visitorData.signature = signaturePad.toDataURL(); 
 
-            document.getElementById('thankyou-msg').innerText = `Thank you ${visitorData.name}, Welcome to F+F`;
-            showScreen('thankyou-screen');
+            if (currentVisitorType === 'Contractor') {
+                const video = document.getElementById('face-cam');
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    const snapCanvas = document.createElement('canvas');
+                    snapCanvas.width = video.videoWidth; snapCanvas.height = video.videoHeight;
+                    const ctx = snapCanvas.getContext('2d');
+                    ctx.translate(snapCanvas.width, 0); ctx.scale(-1, 1);
+                    ctx.drawImage(video, 0, 0, snapCanvas.width, snapCanvas.height);
+                    visitorData.photoData = snapCanvas.toDataURL('image/jpeg', 0.8);
+                    
+                    // Turn outline green to signal success, await for 500ms to allow user to see it
+                    document.getElementById('face-guide').style.borderColor = '#28a745';
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+            }
 
-            let pdfStr = null;
-            if (!isReturningVisitor && visitorData.type === 'Contractor') {
-                pdfStr = await generateContractorPDF(visitorData);
-            }
-            sendToCloud(visitorData, pdfStr, "SignIn");
+            document.getElementById('thankyou-msg').innerText = `Thank you ${visitorData.name}, Welcome to F+F`;
+            showScreen('thankyou-screen');
 
-            if (!isReturningVisitor) {
-                const qrContainer = document.getElementById("lbl-qr");
-                qrContainer.innerHTML = ""; 
+            let pdfStr = null;
+            if (!isReturningVisitor && visitorData.type === 'Contractor') {
+                pdfStr = await generateContractorPDF(visitorData);
+            }
+            sendToCloud(visitorData, pdfStr, "SignIn");
 
-                // TRUNCATION: Keep data slim for larger QR blocks
-                const sName = visitorData.name.substring(0, 20);
-                const sCo = visitorData.company.substring(0, 20);
-                const sContact = visitorData.contact.substring(0, 15);
-                const qrText = `${sName}|${visitorData.type}|${sCo}|${visitorData.vehicle}|${sContact}`;
+            if (!isReturningVisitor) {
+                const qrContainer = document.getElementById("lbl-qr");
+                qrContainer.innerHTML = ""; 
 
-                // LEVEL L: Optimized for scanning distance
-                new QRCode(qrContainer, { 
-                    text: qrText, 
-                    width: 256, 
-                    height: 256, 
-                    correctLevel: QRCode.CorrectLevel.L 
-                });
+                // TRUNCATION: Keep data slim for larger QR blocks
+                const sName = visitorData.name.substring(0, 20);
+                const sCo = visitorData.company.substring(0, 20);
+                const sContact = visitorData.contact.substring(0, 15);
+                const qrText = `${sName}|${visitorData.type}|${sCo}|${visitorData.vehicle}|${sContact}`;
 
-                setTimeout(() => { 
-                    sendToPrintNode(visitorData);
-                    setTimeout(() => { showScreen('home-screen'); signaturePad.clear(); }, 4000); 
-                }, 800); 
-            } else {
-                setTimeout(() => { showScreen('home-screen'); signaturePad.clear(); }, 4000);
-            }
-        }
+                // LEVEL L: Optimized for scanning distance
+                new QRCode(qrContainer, { 
+                    text: qrText, 
+                    width: 256, 
+                    height: 256, 
+                    correctLevel: QRCode.CorrectLevel.L 
+                });
 
-        async function startScanner(mode) {
-            scanMode = mode;
-            document.getElementById('scan-title').innerText = (mode === 'SignOut') ? "Sign Out" : "Re-Sign In";
-            document.getElementById('safety-reminder-out').style.display = (mode === 'SignOut') ? "block" : "none";
-            showScreen('scan-screen');
-            html5QrCode = new Html5Qrcode("reader");
-            try { await html5QrCode.start({ facingMode: "user" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (text) => handleScanResult(text)); } catch (err) {}
-        }
+                setTimeout(() => { 
+                    sendToPrintNode(visitorData);
+                    setTimeout(() => { showScreen('home-screen'); signaturePad.clear(); }, 4000); 
+                }, 800); 
+            } else {
+                setTimeout(() => { showScreen('home-screen'); signaturePad.clear(); }, 4000);
+            }
+        }
 
-        function stopScanner() { if (html5QrCode && html5QrCode.isScanning) html5QrCode.stop().then(() => html5QrCode.clear()); }
+        async function startScanner(mode) {
+            scanMode = mode;
+            document.getElementById('scan-title').innerText = (mode === 'SignOut') ? "Sign Out" : "Re-Sign In";
+            document.getElementById('safety-reminder-out').style.display = (mode === 'SignOut') ? "block" : "none";
+            showScreen('scan-screen');
+            html5QrCode = new Html5Qrcode("reader");
+            try { await html5QrCode.start({ facingMode: "user" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (text) => handleScanResult(text)); } catch (err) {}
+        }
 
-        function handleScanResult(identifier) {
-            if (!identifier) return;
-            playPing(); stopScanner(); 
-            let parts = identifier.split('|'); let name = parts[0];
-            
-            if (scanMode === 'SignOut') {
-                sendToCloud({ name: name, type: parts[1] || 'Unknown' }, null, "SignOut");
-                document.getElementById('thankyou-msg').innerText = `Goodbye ${name}!`; 
-                showScreen('thankyou-screen');
-                setTimeout(() => { showScreen('home-screen'); }, 4000);
-            } else {
-                isReturningVisitor = true;
-                visitorData = { name, type: parts[1], company: parts[2], vehicle: parts[3], contact: parts[4] };
-                document.getElementById('sig-welcome').innerHTML = `Welcome back <strong>${name}</strong>, please sign in.`;
-                showScreen('signature-screen'); setTimeout(resizeCanvas, 100);
-            }
-        }
-    </script>
+        function stopScanner() { if (html5QrCode && html5QrCode.isScanning) html5QrCode.stop().then(() => html5QrCode.clear()); }
+
+        function handleScanResult(identifier) {
+            if (!identifier) return;
+            playPing(); stopScanner(); 
+            let parts = identifier.split('|'); let name = parts[0];
+            
+            if (scanMode === 'SignOut') {
+                sendToCloud({ name: name, type: parts[1] || 'Unknown' }, null, "SignOut");
+                document.getElementById('thankyou-msg').innerText = `Goodbye ${name}!`; 
+                showScreen('thankyou-screen');
+                setTimeout(() => { showScreen('home-screen'); }, 4000);
+            } else {
+                isReturningVisitor = true;
+                visitorData = { name, type: parts[1], company: parts[2], vehicle: parts[3], contact: parts[4] };
+                document.getElementById('sig-welcome').innerHTML = `Welcome back <strong>${name}</strong>, please sign in.`;
+                showScreen('signature-screen'); setTimeout(resizeCanvas, 100);
+            }
+        }
+    </script>
 </body>
 </html>
