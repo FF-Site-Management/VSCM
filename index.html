@@ -212,7 +212,7 @@
 
     <script>
         const PRINTNODE_API_KEY = 'LehZ1J7FDq_4U3OZJ3Q_xe4USU_CwSYi2FF9J7UPEZ8'; 
-        const PRINTNODE_PRINTER_ID = '75315246';    
+        const PRINTNODE_PRINTER_ID = '75315246';   
 
         let currentVisitorType = '';
         let html5QrCode;
@@ -409,7 +409,12 @@
 
             // 2. Text (Tightened Y coordinates)
             doc.setFontSize(14);
-            doc.text(vData.name.toUpperCase(), 27, 20, { align: 'center' });
+            
+            // Generate Print Name: First Name and Surname Initial
+            const nameParts = vData.name.trim().split(' ');
+            const printName = nameParts.length > 1 ? `${nameParts[0]} ${nameParts[nameParts.length - 1].charAt(0)}.` : nameParts[0];
+
+            doc.text(printName.toUpperCase(), 27, 20, { align: 'center' });
             doc.setFontSize(10);
             doc.text(vData.company, 27, 26, { align: 'center' });
 
