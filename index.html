@@ -49,35 +49,55 @@
             font-weight: bold;
         }
 
+        /* Top Left Language Button */
+        .lang-toggle-btn {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background: rgba(255,255,255,0.9);
+            border: 2px solid white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: var(--accent);
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
         .software-logo {
             position: fixed;
-            top: 15px; 
+            bottom: 15px;
             right: 15px;
-            width: 80px; 
+            width: 125px;
             height: auto;
             opacity: 0.9;
             z-index: 100;
             pointer-events: none;
         }
 
-        /* Language Grid Layout */
+        /* Language Selection Styles */
         .lang-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 12px;
             margin-top: 20px;
         }
         .btn-lang {
-            padding: 15px;
+            padding: 18px;
             font-size: 1.1em;
             background: #f8f9fa;
             border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             color: var(--accent);
             font-weight: bold;
+            transition: all 0.2s;
         }
-        .btn-lang:hover { background: #e9ecef; }
+        .btn-lang:active { transform: scale(0.98); background: #e9ecef; }
 
         #reader video {
             transform: scaleX(-1);
@@ -133,6 +153,7 @@
 </head>
 <body>
 
+    <button id="main-lang-btn" class="lang-toggle-btn" onclick="openLanguageModal()">🌐 Language</button>
     <img src="assets/software-logo.png" alt="Design Logo" class="software-logo">
 
     <div id="home-screen" class="view active">
@@ -142,13 +163,12 @@
         <button class="btn" onclick="showScreen('type-screen')">Sign In</button>
         <button class="btn btn-secondary" onclick="startScanner('SignOut')">Sign Out</button>
         <button class="btn btn-re-signin" style="margin-top: 40px;" onclick="startScanner('ReSignIn')">🔄 Re-Sign In (Scan Badge)</button>
-        
-        <button class="btn btn-secondary" style="margin-top: 10px; font-size: 1.1em;" onclick="openLanguageModal()">🌐 Languages</button>
     </div>
 
     <div id="language-modal" class="modal-overlay">
         <div class="modal-content">
-            <h2 style="color: var(--accent); margin-bottom: 10px;">Select Language</h2>
+            <h2 style="color: var(--accent); margin-bottom: 5px;">Select Language</h2>
+            <p style="margin-bottom: 20px; color: #666;">Please choose your preferred language</p>
             <div class="lang-grid">
                 <button class="btn-lang" onclick="selectLanguage('English')">English</button>
                 <button class="btn-lang" onclick="selectLanguage('Français')">Français</button>
@@ -159,7 +179,7 @@
                 <button class="btn-lang" onclick="selectLanguage('中文')">中文</button>
                 <button class="btn-lang" onclick="selectLanguage('日本語')">日本語</button>
             </div>
-            <button class="btn btn-secondary" style="margin-top: 20px; padding: 10px;" onclick="closeLanguageModal()">Close</button>
+            <button class="btn btn-secondary" style="margin-top: 25px; padding: 12px; font-size: 1.2em;" onclick="closeLanguageModal()">Cancel</button>
         </div>
     </div>
 
@@ -260,15 +280,6 @@
 
         const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzYLFzYTCpzL2hLi4VsdgnPIXG-FRg8edQFNqzPJYEwYFxzDmGj1sSyKyROUdXRBuX1/exec"; 
 
-        // Language Modal Functions
-        function openLanguageModal() { document.getElementById('language-modal').style.display = 'flex'; }
-        function closeLanguageModal() { document.getElementById('language-modal').style.display = 'none'; }
-        function selectLanguage(lang) {
-            console.log("Language Selected:", lang);
-            // Logic to change UI text would go here
-            closeLanguageModal();
-        }
-
         const contractorDocuments = [
             { title: "1. FF156 Contractors Rules", file: "assets/FF156   Contractors Rules v2.0.jpg", text: "Contractor has read and accepted the FF156 Contractors Rules." },
             { title: "2. FF157 Permit to Work", file: "assets/FF157   Permit to Work v2.0.jpg", text: "Contractor has read and accepted the FF157 Permit to Work." },
@@ -279,6 +290,14 @@
         let isReviewingExtra = false;
         let selectedExtraDocs = [];
         let extraDocIndex = 0;
+
+        // Language Logic
+        function openLanguageModal() { document.getElementById('language-modal').style.display = 'flex'; }
+        function closeLanguageModal() { document.getElementById('language-modal').style.display = 'none'; }
+        function selectLanguage(lang) {
+            console.log("Language switched to:", lang);
+            closeLanguageModal();
+        }
 
         function playPing() {
             try {
@@ -297,6 +316,14 @@
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
             document.getElementById('document-modal').style.display = 'none';
+
+            // Show/Hide Language button based on screen
+            const langBtn = document.getElementById('main-lang-btn');
+            if(screenId === 'home-screen' || screenId === 'type-screen') {
+                langBtn.style.display = 'flex';
+            } else {
+                langBtn.style.display = 'none';
+            }
             
             if (screenId === 'signature-screen') {
                 const faceGuide = document.getElementById('face-guide');
@@ -431,28 +458,39 @@
         async function sendToPrintNode(vData) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ unit: 'mm', format: [54, 86] });
+            
             const logo = new Image();
             logo.src = 'assets/newlogo.jpeg';
             doc.addImage(logo, 'JPEG', 6, 2, 42, 12);
+
             const nameParts = vData.name.trim().split(' ');
             const printName = nameParts.length > 1 ? `${nameParts[0]} ${nameParts[nameParts.length - 1].charAt(0)}.` : nameParts[0];
+
             doc.setFontSize(14);
             doc.text(printName.toUpperCase(), 27, 20, { align: 'center' });
             doc.setFontSize(10);
             doc.text(vData.company, 27, 26, { align: 'center' });
+
             const tempDiv = document.createElement("div");
             const sName = vData.name.substring(0, 20);
             const sCo = vData.company.substring(0, 20);
             const sContact = vData.contact.substring(0, 15);
             const qrText = `${sName}|${vData.type}|${sCo}|${vData.vehicle}|${sContact}`;
+
             new QRCode(tempDiv, { text: qrText, width: 128, height: 128, correctLevel: QRCode.CorrectLevel.L });
+            
             setTimeout(async () => {
                 const qrCanvas = tempDiv.querySelector('canvas');
-                if (qrCanvas) { doc.addImage(qrCanvas.toDataURL("image/png"), 'PNG', 6, 28, 42, 42); }
+                if (qrCanvas) {
+                    doc.addImage(qrCanvas.toDataURL("image/png"), 'PNG', 6, 28, 42, 42);
+                }
+                
                 doc.setLineWidth(0.5);
                 doc.line(5, 74, 49, 74);
                 doc.text("F+F " + vData.type.toUpperCase(), 27, 81, { align: 'center' });
+
                 const base64PDF = doc.output('datauristring').split(',')[1];
+
                 try {
                     await fetch('https://api.printnode.com/printjobs', {
                         method: 'POST',
@@ -479,18 +517,23 @@
             const timestamp = now.toLocaleDateString() + " " + now.toLocaleTimeString();
             const logoImg = new Image();
             logoImg.src = 'assets/newlogo.jpeg';
+            
             const allDocsToSign = contractorDocuments.concat(selectedExtraDocs || []);
+
             allDocsToSign.forEach((docItem, index) => {
                 if (index > 0) doc.addPage();
                 doc.addImage(logoImg, 'PNG', 85, 5, 40, 15); 
                 doc.setFontSize(18);
                 doc.text("Foster + Freeman Contractor Agreement", 105, 30, { align: "center" });
                 if (data.photoData) doc.addImage(data.photoData, 'JPEG', 160, 40, 30, 40);
+                
                 doc.setFontSize(14); 
                 doc.text(docItem.title, 20, 45);
+                
                 doc.setFontSize(11);
                 const splitText = doc.splitTextToSize(docItem.text, 130);
                 doc.text(splitText, 20, 55);
+
                 if (data.workDescription) {
                     doc.setFontSize(11);
                     doc.text("Description of Work:", 20, 165);
@@ -498,6 +541,7 @@
                     const splitDesc = doc.splitTextToSize(data.workDescription, 130);
                     doc.text(splitDesc, 20, 172);
                 }
+
                 doc.setFontSize(10);
                 doc.text(`Signed by: ${data.name} | Date: ${timestamp}`, 20, 190);
                 doc.addImage(data.signature, 'PNG', 130, 185, 50, 20); 
@@ -513,6 +557,7 @@
 
         async function finalizeSignIn() {
             if(signaturePad.isEmpty()) return alert("Please sign the pad.");
+            
             if (!isReturningVisitor) {
                 visitorData = {
                     type: currentVisitorType,
@@ -524,7 +569,11 @@
                 };
             }
             visitorData.signature = signaturePad.toDataURL(); 
-            if (!isReturningVisitor) { sendToPrintNode(visitorData); }
+
+            if (!isReturningVisitor) {
+                sendToPrintNode(visitorData);
+            }
+
             if (currentVisitorType === 'Contractor') {
                 const video = document.getElementById('face-cam');
                 if (video.readyState === video.HAVE_ENOUGH_DATA) {
@@ -537,14 +586,20 @@
                     document.getElementById('face-guide').style.borderColor = '#28a745';
                 }
             }
+
             document.getElementById('thankyou-msg').innerText = `Thank you ${visitorData.name}, Welcome to F+F`;
             showScreen('thankyou-screen');
+
             let pdfStr = null;
             if (!isReturningVisitor && visitorData.type === 'Contractor') {
                 pdfStr = await generateContractorPDF(visitorData);
             }
             sendToCloud(visitorData, pdfStr, "SignIn");
-            setTimeout(() => { showScreen('home-screen'); signaturePad.clear(); }, 3000);
+
+            setTimeout(() => { 
+                showScreen('home-screen'); 
+                signaturePad.clear(); 
+            }, 3000);
         }
 
         async function startScanner(mode) {
@@ -562,6 +617,7 @@
             if (!identifier) return;
             playPing(); stopScanner(); 
             let parts = identifier.split('|'); let name = parts[0];
+            
             if (scanMode === 'SignOut') {
                 sendToCloud({ name: name, type: parts[1] || 'Unknown' }, null, "SignOut");
                 document.getElementById('thankyou-msg').innerText = `Goodbye ${name}!`; 
