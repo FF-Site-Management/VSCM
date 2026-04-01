@@ -49,7 +49,6 @@
             font-weight: bold;
         }
 
-        /* UPDATED: Software Logo Top Right at 80px */
         .software-logo {
             position: fixed;
             top: 20px;
@@ -60,7 +59,6 @@
             z-index: 1000;
         }
 
-        /* Language Button Styling */
         .lang-btn-container {
             position: fixed;
             top: 20px;
@@ -209,6 +207,7 @@
 
     <div id="decline-screen" class="view">
         <h2 style="color: #dc3545;" data-i18n="assist_req">Assistance Required</h2>
+        <p>You have declined the terms for: <strong id="declined-doc-name"></strong>.</p>
         <p data-i18n="decline_msg">You have declined the terms. Please wait here.</p>
     </div>
 
@@ -234,11 +233,10 @@
         const PRINTNODE_API_KEY = 'LehZ1J7FDq_4U3OZJ3Q_xe4USU_CwSYi2FF9J7UPEZ8'; 
         const PRINTNODE_PRINTER_ID = '75315246';   
 
-        // Translation Dictionary
         const translations = {
             en: { welcome: "Welcome", safety_notice: "⚠️ Signing IN and OUT is mandatory for evacuation procedures.", sign_in: "Sign In", sign_out: "Sign Out", re_sign_in: "🔄 Re-Sign In (Scan Badge)", visit_as: "Who are you visiting as?", visitor: "Visitor", contractor: "Contractor", back: "Back", next: "Next", cancel: "Cancel", name: "Full Name", company: "Company Name", vehicle: "Vehicle Registration", contact: "F+F Contact Person", decline: "Decline", accept: "I Accept", extra_tasks: "Additional Tasks", select_permits: "Select permits required for your work:", work_desc: "Description of Work (Required)...", signature: "Signature", sign_below: "Please sign below to complete your entry:", clear: "Clear Signature", assist_req: "Assistance Required", decline_msg: "You have declined terms. A member of staff has been notified.", safety_out: "Please scan out so you are accounted for.", scan_qr: "Hold your badge QR code up to the camera", manual_entry: "OR enter name manually:", confirm_out: "Confirm Sign Out", thank_you: "Thank you!", returning_home: "Returning to home screen shortly..." },
             fr: { welcome: "Bienvenue", safety_notice: "⚠️ L'entrée et la sortie sont obligatoires pour l'évacuation.", sign_in: "Se Connecter", sign_out: "Se Déconnecter", re_sign_in: "🔄 Se reconnecter (Badge)", visit_as: "Qui visitez-vous ?", visitor: "Visiteur", contractor: "Entrepreneur", back: "Retour", next: "Suivant", cancel: "Annuler", name: "Nom complet", company: "Nom de l'entreprise", vehicle: "Immatriculation", contact: "Personne de contact F+F", decline: "Refuser", accept: "J'accepte", extra_tasks: "Tâches supplémentaires", select_permits: "Sélectionnez les permis requis :", work_desc: "Description du travail...", signature: "Signature", sign_below: "Signez ci-dessous :", clear: "Effacer", assist_req: "Assistance requise", decline_msg: "Vous avez refusé les conditions. Un membre du personnel arrive.", safety_out: "Veuillez scanner pour sortir.", scan_qr: "Présentez le code QR à la caméra", manual_entry: "OU entrez le nom manuellement :", confirm_out: "Confirmer la sortie", thank_you: "Merci !", returning_home: "Retour à l'accueil..." },
-            es: { welcome: "Bienvenido", safety_notice: "⚠️ Registrarse al entrar y salir es obligatorio.", sign_in: "Entrada", sign_out: "Salida", re_sign_in: "🔄 Reingresar (Escanear)", visit_as: "¿Cómo nos visita?", visitor: "Visitante", contractor: "Contratista", back: "Atrás", next: "Siguiente", cancel: "Cancelar", name: "Nombre completo", company: "Empresa", vehicle: "Matrícula", contact: "Contacto de F+F", decline: "Rechazar", accept: "Acepto", extra_tasks: "Tareas adicionales", select_permits: "Seleccione los permisos necesarios:", work_desc: "Descripción del trabajo...", signature: "Firma", sign_below: "Firme a continuación:", clear: "Limpiar", assist_req: "Asistencia requerida", decline_msg: "Ha rechazado los términos. Alguien vendrá a ayudarle.", safety_out: "Por favor, regístrese al salir.", scan_qr: "Muestre el código QR a la cámara", manual_entry: "O ingrese el nombre manualmente:", confirm_out: "Confirmar salida", thank_you: "¡Gracias!", returning_home: "Volviendo al inicio..." },
+            es: { welcome: "Bienvenido", safety_notice: "⚠️ Registrarse al entrar y salir es obligatorio.", sign_in: "Entrada", sign_out: "Salida", re_sign_in: "🔄 Reingresar (Escanear)", visit_as: "¿Cómo nos visita?", visitor: "Visitante", contractor: "Contratista", back: "Atrás", next: "Siguiente", cancel: "Cancelar", name: "Nombre completo", company: "Empresa", vehicle: "Matrícula", contact: "Contacto de F+F", decline: "Rechazar", accept: "Acepto", extra_tasks: "Tareas adicionales", select_permits: "Seleccione los permisos necesarios:", work_desc: "Descripción del trabajo...", signature: "Firma", sign_below: "Firme a continuación:", clear: "Limpiar", assist_req: "Assistance requise", decline_msg: "Ha rechazado los términos. Alguien vendrá a ayudarle.", safety_out: "Por favor, regístrese al salir.", scan_qr: "Muestre el código QR a la cámara", manual_entry: "O ingrese el nombre manualmente:", confirm_out: "Confirmar salida", thank_you: "¡Gracias!", returning_home: "Volviendo al inicio..." },
             de: { welcome: "Willkommen", safety_notice: "⚠️ An- und Abmelden ist für Evakuierungsverfahren obligatorisch.", sign_in: "Anmelden", sign_out: "Abmelden", re_sign_in: "🔄 Erneut anmelden (Badge)", visit_as: "Als was besuchen Sie uns?", visitor: "Besucher", contractor: "Auftragnehmer", back: "Zurück", next: "Weiter", cancel: "Abbrechen", name: "Vollständiger Name", company: "Firmenname", vehicle: "Fahrzeugkennzeichen", contact: "F+F Ansprechpartner", decline: "Ablehnen", accept: "Akzeptieren", extra_tasks: "Zusätzliche Aufgaben", select_permits: "Erforderliche Genehmigungen auswählen:", work_desc: "Arbeitsbeschreibung...", signature: "Unterschrift", sign_below: "Bitte unten unterschreiben:", clear: "Löschen", assist_req: "Hilfe benötigt", decline_msg: "Bedingungen abgelehnt. Bitte warten Sie hier.", safety_out: "Bitte zum Abmelden scannen.", scan_qr: "QR-Code vor die Kamera halten", manual_entry: "ODER Namen manuell eingeben:", confirm_out: "Abmeldung bestätigen", thank_you: "Vielen Dank!", returning_home: "Zurück zum Hauptbildschirm..." },
             zh: { welcome: "欢迎", safety_notice: "⚠️ 为了疏散程序，必须登记进入和退出。", sign_in: "签到", sign_out: "签退", re_sign_in: "🔄 重新签到 (扫描徽章)", visit_as: "您的访问身份是？", visitor: "访客", contractor: "承包商", back: "返回", next: "下一步", cancel: "取消", name: "全名", company: "公司名称", vehicle: "车牌号", contact: "F+F 联系人", decline: "拒绝", accept: "我接受", extra_tasks: "额外任务", select_permits: "请选择所需的许可证：", work_desc: "工作描述 (必填)...", signature: "签名", sign_below: "请在下方签名：", clear: "清除签名", assist_req: "需要协助", decline_msg: "您已拒绝条款。请在此等候。", safety_out: "请签退以进行人数清点。", scan_qr: "请将徽章二维码对准摄像头", manual_entry: "或手动输入姓名：", confirm_out: "确认签退", thank_you: "谢谢！", returning_home: "即将返回主屏幕..." },
             ar: { welcome: "أهلاً بك", safety_notice: "⚠️ تسجيل الدخول والخروج إلزامي لإجراءات الإخلاء.", sign_in: "تسجيل الدخول", sign_out: "تسجيل الخروج", re_sign_in: "🔄 إعادة الدخول (مسح الشارة)", visit_as: "ما هي صفة زيارتك؟", visitor: "زائر", contractor: "مقاول", back: "رجوع", next: "التالي", cancel: "إلغاء", name: "الاسم الكامل", company: "اسم الشركة", vehicle: "رقم السيارة", contact: "شخص الاتصال في F+F", decline: "رفض", accept: "أوافق", extra_tasks: "مهام إضافية", select_permits: "اختر التصاريح المطلوبة لعملك:", work_desc: "وصف العمل (مطلوب)...", signature: "التوقيع", sign_below: "يرجى التوقيع أدناه:", clear: "مسح التوقيع", assist_req: "مساعدة مطلوبة", decline_msg: "لقد رفضت الشروط. يرجى الانتظار هنا.", safety_out: "يرجى تسجيل الخروج ليتم احتسابك.", scan_qr: "ضع رمز QR أمام الكاميرا", manual_entry: "أو أدخل الاسم يدويًا:", confirm_out: "تأكيد الخروج", thank_you: "شكراً لك!", returning_home: "العودة للشاشة الرئيسية..." }
@@ -272,10 +270,10 @@
         const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzYLFzYTCpzL2hLi4VsdgnPIXG-FRg8edQFNqzPJYEwYFxzDmGj1sSyKyROUdXRBuX1/exec"; 
 
         const contractorDocuments = [
-            { title: "1. FF156 Contractors Rules", file: "assets/FF156   Contractors Rules v2.0.jpg", text: "Contractor has read and accepted the FF156 Contractors Rules." },
-            { title: "2. FF157 Permit to Work", file: "assets/FF157   Permit to Work v2.0.jpg", text: "Contractor has read and accepted the FF157 Permit to Work." },
-            { title: "3. FF158 Contractor H&S Induction Form", file: "assets/FF158   Contractor H&S Induction Form.jpg", text: "Contractor has read and accepted the FF158 Contractor H&S Induction Form." },
-            { title: "4. RA069 SITE RA F&F", file: "assets/RA069   SITE RA F&F v8.0.jpg", text: "Contractor has read and accepted the RA069 SITE RA F&F." }
+            { title: "1. FF156 Contractors Rules", file: "assets/FF156_Contractors_Rules_v2.0.jpg", text: "Contractor has read and accepted the FF156 Contractors Rules." },
+            { title: "2. FF157 Permit to Work", file: "assets/FF157_Permit_to_Work_v2.0.jpg", text: "Contractor has read and accepted the FF157 Permit to Work." },
+            { title: "3. FF158 Contractor H&S Induction Form", file: "assets/FF158_Contractor_H&S_Induction_Form.jpg", text: "Contractor has read and accepted the FF158 Contractor H&S Induction Form." },
+            { title: "4. RA069 SITE RA F&F", file: "assets/RA069_SITE_RA_F&F_v8.0.jpg", text: "Contractor has read and accepted the RA069 SITE RA F&F." }
         ];
 
         let isReviewingExtra = false;
@@ -390,18 +388,17 @@
 
             selectedExtraDocs = [];
             if (document.getElementById('chk-ra078').checked) {
-                selectedExtraDocs.push({ title: "RA078 - Roof Working", file: "assets/RA078   Roof Working v4.0.jpg", text: "Contractor has read and accepted RA078 - Roof Working." });
+                selectedExtraDocs.push({ title: "RA078 - Roof Working", file: "assets/RA078_Roof_Working_v4.0.jpg", text: "Contractor has read and accepted RA078 - Roof Working." });
             }
             if (document.getElementById('chk-ff110').checked) {
-                selectedExtraDocs.push({ title: "FF110 - Permit to Work - Confined Spaces", file: "assets/FF110   Permit to Work - Confined Spaces v2.0.jpg", text: "Contractor has read and accepted FF110 - Permit to Work - Confined Spaces." });
+                selectedExtraDocs.push({ title: "FF110 - Permit to Work - Confined Spaces", file: "assets/FF110_Permit_to_Work_-_Confined_Spaces_v2.0.jpg", text: "Contractor has read and accepted FF110 - Permit to Work - Confined Spaces." });
             }
             if (document.getElementById('chk-ff111').checked) {
-                selectedExtraDocs.push({ title: "FF111 - Permit to Work - Hot Works", file: "assets/FF111   Permit to Work - Hot Works v2.0.jpg", text: "Contractor has read and accepted FF111 - Permit to Work - Hot Works." });
+                selectedExtraDocs.push({ title: "FF111 - Permit to Work - Hot Works", file: "assets/FF111_Permit_to_Work_-_Hot_Works_v2.0.jpg", text: "Contractor has read and accepted FF111 - Permit to Work - Hot Works." });
             }
             if (document.getElementById('chk-ff113').checked) {
-                selectedExtraDocs.push({ title: "FF113 - Permit to Work - Working at Height", file: "assets/FF113 Permit to Work - Working at Height v3.0.jpg", text: "Contractor has read and accepted FF113 - Permit to Work - Working at Height." });
+                selectedExtraDocs.push({ title: "FF113 - Permit to Work - Working at Height", file: "assets/FF113_Permit_to_Work_-_Working_at_Height_v3.0.jpg", text: "Contractor has read and accepted FF113 - Permit to Work - Working at Height." });
             }
-
 
             if (selectedExtraDocs.length > 0) {
                 isReviewingExtra = true;
@@ -431,43 +428,33 @@
             setTimeout(() => { showScreen('home-screen'); }, 15000); 
         }
 
-        // OPTIMIZED PRINT FUNCTION
         async function sendToPrintNode(vData) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ unit: 'mm', format: [54, 86] });
-            
             const logo = new Image();
             logo.src = 'assets/newlogo.jpeg';
             doc.addImage(logo, 'JPEG', 6, 2, 42, 12);
-
             const nameParts = vData.name.trim().split(' ');
             const printName = nameParts.length > 1 ? `${nameParts[0]} ${nameParts[nameParts.length - 1].charAt(0)}.` : nameParts[0];
-
             doc.setFontSize(14);
             doc.text(printName.toUpperCase(), 27, 20, { align: 'center' });
             doc.setFontSize(10);
             doc.text(vData.company, 27, 26, { align: 'center' });
-
             const tempDiv = document.createElement("div");
             const sName = vData.name.substring(0, 20);
             const sCo = vData.company.substring(0, 20);
             const sContact = vData.contact.substring(0, 15);
             const qrText = `${sName}|${vData.type}|${sCo}|${vData.vehicle}|${sContact}`;
-
             new QRCode(tempDiv, { text: qrText, width: 128, height: 128, correctLevel: QRCode.CorrectLevel.L });
-            
             setTimeout(async () => {
                 const qrCanvas = tempDiv.querySelector('canvas');
                 if (qrCanvas) {
                     doc.addImage(qrCanvas.toDataURL("image/png"), 'PNG', 6, 28, 42, 42);
                 }
-                
                 doc.setLineWidth(0.5);
                 doc.line(5, 74, 49, 74);
                 doc.text("F+F " + vData.type.toUpperCase(), 27, 81, { align: 'center' });
-
                 const base64PDF = doc.output('datauristring').split(',')[1];
-
                 try {
                     await fetch('https://api.printnode.com/printjobs', {
                         method: 'POST',
@@ -494,23 +481,18 @@
             const timestamp = now.toLocaleDateString() + " " + now.toLocaleTimeString();
             const logoImg = new Image();
             logoImg.src = 'assets/newlogo.jpeg';
-            
             const allDocsToSign = contractorDocuments.concat(selectedExtraDocs || []);
-
             allDocsToSign.forEach((docItem, index) => {
                 if (index > 0) doc.addPage();
                 doc.addImage(logoImg, 'PNG', 85, 5, 40, 15); 
                 doc.setFontSize(18);
                 doc.text("Foster + Freeman Contractor Agreement", 105, 30, { align: "center" });
                 if (data.photoData) doc.addImage(data.photoData, 'JPEG', 160, 40, 30, 40);
-                
                 doc.setFontSize(14); 
                 doc.text(docItem.title, 20, 45);
-                
                 doc.setFontSize(11);
                 const splitText = doc.splitTextToSize(docItem.text, 130);
                 doc.text(splitText, 20, 55);
-
                 if (data.workDescription) {
                     doc.setFontSize(11);
                     doc.text("Description of Work:", 20, 165);
@@ -518,7 +500,6 @@
                     const splitDesc = doc.splitTextToSize(data.workDescription, 130);
                     doc.text(splitDesc, 20, 172);
                 }
-
                 doc.setFontSize(10);
                 doc.text(`Signed by: ${data.name} | Date: ${timestamp}`, 20, 190);
                 doc.addImage(data.signature, 'PNG', 130, 185, 50, 20); 
@@ -534,7 +515,6 @@
 
         async function finalizeSignIn() {
             if(signaturePad.isEmpty()) return alert("Please sign the pad.");
-            
             if (!isReturningVisitor) {
                 visitorData = {
                     type: currentVisitorType,
@@ -546,9 +526,7 @@
                 };
             }
             visitorData.signature = signaturePad.toDataURL(); 
-
             if (!isReturningVisitor) sendToPrintNode(visitorData);
-
             if (currentVisitorType === 'Contractor') {
                 const video = document.getElementById('face-cam');
                 if (video.readyState === video.HAVE_ENOUGH_DATA) {
@@ -561,20 +539,14 @@
                     document.getElementById('face-guide').style.borderColor = '#28a745';
                 }
             }
-
             document.getElementById('thankyou-msg').innerText = `Thank you ${visitorData.name}, Welcome to F+F`;
             showScreen('thankyou-screen');
-
             let pdfStr = null;
             if (!isReturningVisitor && visitorData.type === 'Contractor') {
                 pdfStr = await generateContractorPDF(visitorData);
             }
             sendToCloud(visitorData, pdfStr, "SignIn");
-
-            setTimeout(() => { 
-                showScreen('home-screen'); 
-                signaturePad.clear(); 
-            }, 3000);
+            setTimeout(() => { showScreen('home-screen'); signaturePad.clear(); }, 3000);
         }
 
         async function startScanner(mode) {
@@ -592,7 +564,6 @@
             if (!identifier) return;
             playPing(); stopScanner(); 
             let parts = identifier.split('|'); let name = parts[0];
-            
             if (scanMode === 'SignOut') {
                 sendToCloud({ name: name, type: parts[1] || 'Unknown' }, null, "SignOut");
                 document.getElementById('thankyou-msg').innerText = `Goodbye ${name}!`; 
