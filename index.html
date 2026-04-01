@@ -51,14 +51,33 @@
 
         .software-logo {
             position: fixed;
-            top: 15px; /* Moved to top */
+            top: 15px; 
             right: 15px;
-            width: 80px; /* Reduced to 80px */
+            width: 80px; 
             height: auto;
             opacity: 0.9;
             z-index: 100;
             pointer-events: none;
         }
+
+        /* Language Grid Layout */
+        .lang-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn-lang {
+            padding: 15px;
+            font-size: 1.1em;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        .btn-lang:hover { background: #e9ecef; }
 
         #reader video {
             transform: scaleX(-1);
@@ -124,7 +143,24 @@
         <button class="btn btn-secondary" onclick="startScanner('SignOut')">Sign Out</button>
         <button class="btn btn-re-signin" style="margin-top: 40px;" onclick="startScanner('ReSignIn')">🔄 Re-Sign In (Scan Badge)</button>
         
-        <button class="btn btn-secondary" style="margin-top: 10px; font-size: 1.1em;" onclick="alert('Language selection: English, Français, Deutsch, Español, Italiano, Polski, 中文, 日本語')">🌐 Languages</button>
+        <button class="btn btn-secondary" style="margin-top: 10px; font-size: 1.1em;" onclick="openLanguageModal()">🌐 Languages</button>
+    </div>
+
+    <div id="language-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 style="color: var(--accent); margin-bottom: 10px;">Select Language</h2>
+            <div class="lang-grid">
+                <button class="btn-lang" onclick="selectLanguage('English')">English</button>
+                <button class="btn-lang" onclick="selectLanguage('Français')">Français</button>
+                <button class="btn-lang" onclick="selectLanguage('Deutsch')">Deutsch</button>
+                <button class="btn-lang" onclick="selectLanguage('Español')">Español</button>
+                <button class="btn-lang" onclick="selectLanguage('Italiano')">Italiano</button>
+                <button class="btn-lang" onclick="selectLanguage('Polski')">Polski</button>
+                <button class="btn-lang" onclick="selectLanguage('中文')">中文</button>
+                <button class="btn-lang" onclick="selectLanguage('日本語')">日本語</button>
+            </div>
+            <button class="btn btn-secondary" style="margin-top: 20px; padding: 10px;" onclick="closeLanguageModal()">Close</button>
+        </div>
     </div>
 
     <div id="type-screen" class="view">
@@ -223,6 +259,15 @@
         const signaturePad = new SignaturePad(canvas);
 
         const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzYLFzYTCpzL2hLi4VsdgnPIXG-FRg8edQFNqzPJYEwYFxzDmGj1sSyKyROUdXRBuX1/exec"; 
+
+        // Language Modal Functions
+        function openLanguageModal() { document.getElementById('language-modal').style.display = 'flex'; }
+        function closeLanguageModal() { document.getElementById('language-modal').style.display = 'none'; }
+        function selectLanguage(lang) {
+            console.log("Language Selected:", lang);
+            // Logic to change UI text would go here
+            closeLanguageModal();
+        }
 
         const contractorDocuments = [
             { title: "1. FF156 Contractors Rules", file: "assets/FF156   Contractors Rules v2.0.jpg", text: "Contractor has read and accepted the FF156 Contractors Rules." },
@@ -383,45 +428,31 @@
             setTimeout(() => { showScreen('home-screen'); }, 15000); 
         }
 
-        // OPTIMIZED PRINT FUNCTION
         async function sendToPrintNode(vData) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ unit: 'mm', format: [54, 86] });
-            
             const logo = new Image();
             logo.src = 'assets/newlogo.jpeg';
             doc.addImage(logo, 'JPEG', 6, 2, 42, 12);
-
             const nameParts = vData.name.trim().split(' ');
             const printName = nameParts.length > 1 ? `${nameParts[0]} ${nameParts[nameParts.length - 1].charAt(0)}.` : nameParts[0];
-
             doc.setFontSize(14);
             doc.text(printName.toUpperCase(), 27, 20, { align: 'center' });
             doc.setFontSize(10);
             doc.text(vData.company, 27, 26, { align: 'center' });
-
-            // Generate QR specifically for the printer (In-Memory)
             const tempDiv = document.createElement("div");
             const sName = vData.name.substring(0, 20);
             const sCo = vData.company.substring(0, 20);
             const sContact = vData.contact.substring(0, 15);
             const qrText = `${sName}|${vData.type}|${sCo}|${vData.vehicle}|${sContact}`;
-
             new QRCode(tempDiv, { text: qrText, width: 128, height: 128, correctLevel: QRCode.CorrectLevel.L });
-            
-            // Minimal delay to let QR canvas render in background
             setTimeout(async () => {
                 const qrCanvas = tempDiv.querySelector('canvas');
-                if (qrCanvas) {
-                    doc.addImage(qrCanvas.toDataURL("image/png"), 'PNG', 6, 28, 42, 42);
-                }
-                
+                if (qrCanvas) { doc.addImage(qrCanvas.toDataURL("image/png"), 'PNG', 6, 28, 42, 42); }
                 doc.setLineWidth(0.5);
                 doc.line(5, 74, 49, 74);
                 doc.text("F+F " + vData.type.toUpperCase(), 27, 81, { align: 'center' });
-
                 const base64PDF = doc.output('datauristring').split(',')[1];
-
                 try {
                     await fetch('https://api.printnode.com/printjobs', {
                         method: 'POST',
@@ -448,23 +479,18 @@
             const timestamp = now.toLocaleDateString() + " " + now.toLocaleTimeString();
             const logoImg = new Image();
             logoImg.src = 'assets/newlogo.jpeg';
-            
             const allDocsToSign = contractorDocuments.concat(selectedExtraDocs || []);
-
             allDocsToSign.forEach((docItem, index) => {
                 if (index > 0) doc.addPage();
                 doc.addImage(logoImg, 'PNG', 85, 5, 40, 15); 
                 doc.setFontSize(18);
                 doc.text("Foster + Freeman Contractor Agreement", 105, 30, { align: "center" });
                 if (data.photoData) doc.addImage(data.photoData, 'JPEG', 160, 40, 30, 40);
-                
                 doc.setFontSize(14); 
                 doc.text(docItem.title, 20, 45);
-                
                 doc.setFontSize(11);
                 const splitText = doc.splitTextToSize(docItem.text, 130);
                 doc.text(splitText, 20, 55);
-
                 if (data.workDescription) {
                     doc.setFontSize(11);
                     doc.text("Description of Work:", 20, 165);
@@ -472,7 +498,6 @@
                     const splitDesc = doc.splitTextToSize(data.workDescription, 130);
                     doc.text(splitDesc, 20, 172);
                 }
-
                 doc.setFontSize(10);
                 doc.text(`Signed by: ${data.name} | Date: ${timestamp}`, 20, 190);
                 doc.addImage(data.signature, 'PNG', 130, 185, 50, 20); 
@@ -486,11 +511,8 @@
             } catch (err) { console.error("Cloud Error:", err); }
         }
 
-        // OPTIMIZED FINALIZE FUNCTION
         async function finalizeSignIn() {
             if(signaturePad.isEmpty()) return alert("Please sign the pad.");
-            
-            // 1. GATHER DATA IMMEDIATELY
             if (!isReturningVisitor) {
                 visitorData = {
                     type: currentVisitorType,
@@ -502,13 +524,7 @@
                 };
             }
             visitorData.signature = signaturePad.toDataURL(); 
-
-            // 2. TRIGGER PRINT IN BACKGROUND (Parallel Task)
-            if (!isReturningVisitor) {
-                sendToPrintNode(visitorData);
-            }
-
-            // 3. CAPTURE PHOTO (If Contractor)
+            if (!isReturningVisitor) { sendToPrintNode(visitorData); }
             if (currentVisitorType === 'Contractor') {
                 const video = document.getElementById('face-cam');
                 if (video.readyState === video.HAVE_ENOUGH_DATA) {
@@ -521,23 +537,14 @@
                     document.getElementById('face-guide').style.borderColor = '#28a745';
                 }
             }
-
-            // 4. TRANSITION TO THANK YOU IMMEDIATELY
             document.getElementById('thankyou-msg').innerText = `Thank you ${visitorData.name}, Welcome to F+F`;
             showScreen('thankyou-screen');
-
-            // 5. CLOUD UPLOAD (Async)
             let pdfStr = null;
             if (!isReturningVisitor && visitorData.type === 'Contractor') {
                 pdfStr = await generateContractorPDF(visitorData);
             }
             sendToCloud(visitorData, pdfStr, "SignIn");
-
-            // 6. AUTO-RESET
-            setTimeout(() => { 
-                showScreen('home-screen'); 
-                signaturePad.clear(); 
-            }, 3000);
+            setTimeout(() => { showScreen('home-screen'); signaturePad.clear(); }, 3000);
         }
 
         async function startScanner(mode) {
@@ -555,7 +562,6 @@
             if (!identifier) return;
             playPing(); stopScanner(); 
             let parts = identifier.split('|'); let name = parts[0];
-            
             if (scanMode === 'SignOut') {
                 sendToCloud({ name: name, type: parts[1] || 'Unknown' }, null, "SignOut");
                 document.getElementById('thankyou-msg').innerText = `Goodbye ${name}!`; 
