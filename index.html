@@ -34,34 +34,6 @@
             justify-content: center;
             min-height: 95vh;
         }
-
-        /* NEW: Top Right Logo Style */
-        .top-right-logo {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 80px;
-            height: auto;
-            z-index: 1000;
-        }
-
-        /* NEW: Language Selector Style */
-        .language-selector {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-        }
-        .language-selector select {
-            padding: 8px 12px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            font-size: 14px;
-            background: white;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
         h1 { font-size: 2.5em; margin-bottom: 5px; }
         .view { display: none; width: 100%; max-width: 600px; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .active { display: block; }
@@ -77,15 +49,23 @@
             font-weight: bold;
         }
 
+        /* UPDATED: Software Logo Top Right at 80px */
         .software-logo {
             position: fixed;
-            bottom: 15px;
-            right: 15px;
-            width: 125px;
+            top: 20px;
+            right: 20px;
+            width: 80px;
             height: auto;
             opacity: 0.9;
-            z-index: 100;
-            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Language Button Styling */
+        .lang-btn-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
         }
 
         #reader video {
@@ -142,46 +122,50 @@
 </head>
 <body>
 
-    <div class="language-selector">
-        <select onchange="console.log('Language changed to: ' + this.value)">
-            <option value="en">English</option>
-            <option value="fr">French</option>
-            <option value="es">Spanish</option>
-            <option value="de">German</option>
-            <option value="zh">Chinese</option>
-            <option value="ar">Arabic</option>
-        </select>
+    <div class="lang-btn-container">
+        <button class="btn btn-secondary" style="padding: 10px 20px; font-size: 1em; width: auto;" onclick="openLanguageModal()">🌐 Language</button>
     </div>
-
-    <img src="assets/newlogo.jpeg" alt="Logo" class="top-right-logo">
 
     <img src="assets/software-logo.png" alt="Design Logo" class="software-logo">
 
+    <div id="language-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 400px;">
+            <h2>Select Language</h2>
+            <button class="btn" onclick="setLanguage('en')">English</button>
+            <button class="btn" onclick="setLanguage('fr')">Français</button>
+            <button class="btn" onclick="setLanguage('es')">Español</button>
+            <button class="btn" onclick="setLanguage('de')">Deutsch</button>
+            <button class="btn" onclick="setLanguage('zh')">中文</button>
+            <button class="btn" onclick="setLanguage('ar')">العربية</button>
+            <button class="btn btn-secondary" onclick="closeLanguageModal()">Close</button>
+        </div>
+    </div>
+
     <div id="home-screen" class="view active">
         <img src="assets/newlogo.jpeg" alt="Foster + Freeman Logo" style="width: 250px; margin-bottom: 5px; max-width: 100%; height: auto;">
-        <h1>Welcome</h1>
-        <div class="safety-notice">⚠️ Signing IN and OUT is mandatory for evacuation procedures.</div>
-        <button class="btn" onclick="showScreen('type-screen')">Sign In</button>
-        <button class="btn btn-secondary" onclick="startScanner('SignOut')">Sign Out</button>
-        <button class="btn btn-re-signin" style="margin-top: 40px;" onclick="startScanner('ReSignIn')">🔄 Re-Sign In (Scan Badge)</button>
+        <h1 data-i18n="welcome">Welcome</h1>
+        <div class="safety-notice" data-i18n="safety_notice">⚠️ Signing IN and OUT is mandatory for evacuation procedures.</div>
+        <button class="btn" onclick="showScreen('type-screen')" data-i18n="sign_in">Sign In</button>
+        <button class="btn btn-secondary" onclick="startScanner('SignOut')" data-i18n="sign_out">Sign Out</button>
+        <button class="btn btn-re-signin" style="margin-top: 40px;" onclick="startScanner('ReSignIn')" data-i18n="re_sign_in">🔄 Re-Sign In (Scan Badge)</button>
     </div>
 
     <div id="type-screen" class="view">
-        <h2>Who are you visiting as?</h2>
-        <button class="btn" onclick="startForm('Visitor')">Visitor</button>
-        <button class="btn" onclick="startForm('Contractor')">Contractor</button>
-        <button class="btn btn-secondary" onclick="showScreen('home-screen')">Back</button>
+        <h2 data-i18n="visit_as">Who are you visiting as?</h2>
+        <button class="btn" onclick="startForm('Visitor')" data-i18n="visitor">Visitor</button>
+        <button class="btn" onclick="startForm('Contractor')" data-i18n="contractor">Contractor</button>
+        <button class="btn btn-secondary" onclick="showScreen('home-screen')" data-i18n="back">Back</button>
     </div>
 
     <div id="form-screen" class="view">
-        <h2 id="form-title">Sign In</h2>
-        <input type="text" id="name" placeholder="Full Name" required>
-        <input type="text" id="company" placeholder="Company Name" required>
-        <input type="text" id="vehicle" placeholder="Vehicle Registration">
-        <input type="text" id="contact" placeholder="F+F Contact Person" required>
+        <h2 id="form-title" data-i18n="form_sign_in">Sign In</h2>
+        <input type="text" id="name" placeholder="Full Name" data-placeholder="name" required>
+        <input type="text" id="company" placeholder="Company Name" data-placeholder="company" required>
+        <input type="text" id="vehicle" placeholder="Vehicle Registration" data-placeholder="vehicle">
+        <input type="text" id="contact" placeholder="F+F Contact Person" data-placeholder="contact" required>
         
-        <button class="btn" onclick="submitDetails()">Next</button>
-        <button class="btn btn-secondary" onclick="showScreen('type-screen')">Cancel</button>
+        <button class="btn" onclick="submitDetails()" data-i18n="next">Next</button>
+        <button class="btn btn-secondary" onclick="showScreen('type-screen')" data-i18n="cancel">Cancel</button>
     </div>
 
     <div id="document-modal" class="modal-overlay">
@@ -192,65 +176,89 @@
                 <img id="doc-image" src="" alt="Induction Document">
             </div>
             <div style="display: flex; justify-content: space-between;">
-                <button class="btn btn-half btn-decline" onclick="declineTerms()">Decline</button>
-                <button class="btn btn-half btn-accept" onclick="acceptCurrentDocument()">I Accept</button>
+                <button class="btn btn-half btn-decline" onclick="declineTerms()" data-i18n="decline">Decline</button>
+                <button class="btn btn-half btn-accept" onclick="acceptCurrentDocument()" data-i18n="accept">I Accept</button>
             </div>
         </div>
     </div>
 
     <div id="extra-docs-screen" class="view">
-        <h2>Additional Tasks</h2>
-        <p>Please select any specific permits required for your work today (Select all that apply):</p>
+        <h2 data-i18n="extra_tasks">Additional Tasks</h2>
+        <p data-i18n="select_permits">Please select any specific permits required for your work today (Select all that apply):</p>
         <div class="checkbox-group">
             <label><input type="checkbox" class="extra-chk" id="chk-ra078"> 1. RA078 - Roof Working</label>
             <label><input type="checkbox" class="extra-chk" id="chk-ff110"> 2. FF110 - Permit to Work - Confined Spaces</label>
             <label><input type="checkbox" class="extra-chk" id="chk-ff111"> 3. FF111 - Permit to Work - Hot Works</label>
             <label><input type="checkbox" class="extra-chk" id="chk-ff113"> 4. FF113 - Permit to Work - Working at Height</label>
         </div>
-        <textarea id="work-description" placeholder="Description of Work (Required)..." rows="3" required></textarea>
-        <button class="btn" onclick="submitExtraDocs()">Next</button>
+        <textarea id="work-description" placeholder="Description of Work (Required)..." data-placeholder="work_desc" rows="3" required></textarea>
+        <button class="btn" onclick="submitExtraDocs()" data-i18n="next">Next</button>
     </div>
 
     <div id="signature-screen" class="view">
-        <h2>Signature</h2>
+        <h2 data-i18n="signature">Signature</h2>
         <div id="camera-container">
             <video id="face-cam" autoplay playsinline></video>
             <div id="face-guide"></div>
         </div>
-        <p id="sig-welcome" style="font-size: 1.2em;">Please sign below to complete your entry:</p>
+        <p id="sig-welcome" style="font-size: 1.2em;" data-i18n="sign_below">Please sign below to complete your entry:</p>
         <canvas id="signature-pad"></canvas>
-        <button class="btn btn-secondary" style="padding: 10px; font-size: 1em; margin-top: 10px;" onclick="signaturePad.clear()">Clear Signature</button>
-        <button class="btn" onclick="finalizeSignIn()">Sign In</button>
+        <button class="btn btn-secondary" style="padding: 10px; font-size: 1em; margin-top: 10px;" onclick="signaturePad.clear()" data-i18n="clear">Clear Signature</button>
+        <button class="btn" onclick="finalizeSignIn()" data-i18n="sign_in">Sign In</button>
     </div>
 
     <div id="decline-screen" class="view">
-        <h2 style="color: #dc3545;">Assistance Required</h2>
-        <p>You have declined the terms for: <br><strong id="declined-doc-name"></strong></p>
-        <p style="font-size: 1.2em; margin-top: 20px;">Please wait here.</p>
-        <p>A member of staff has been notified and will be with you shortly to assist.</p>
+        <h2 style="color: #dc3545;" data-i18n="assist_req">Assistance Required</h2>
+        <p data-i18n="decline_msg">You have declined the terms. Please wait here.</p>
     </div>
 
     <div id="scan-screen" class="view">
         <h2 id="scan-title">Scan Badge</h2>
-        <div id="safety-reminder-out" class="safety-notice" style="display:none;">Please scan out so you are accounted for in an evacuation.</div>
-        <p id="scan-subtitle">Hold your badge QR code up to the camera</p>
+        <div id="safety-reminder-out" class="safety-notice" style="display:none;" data-i18n="safety_out">Please scan out so you are accounted for in an evacuation.</div>
+        <p id="scan-subtitle" data-i18n="scan_qr">Hold your badge QR code up to the camera</p>
         <div id="reader" style="width: 100%; max-width: 400px; margin: auto; border-radius: 10px; overflow: hidden; background: #000;"></div>
         <div style="margin-top: 20px;">
-            <p>OR enter name manually:</p>
-            <input type="text" id="scan-manual-name" placeholder="Enter Full Name">
-            <button class="btn" onclick="handleScanResult(document.getElementById('scan-manual-name').value)">Confirm Sign Out</button>
+            <p data-i18n="manual_entry">OR enter name manually:</p>
+            <input type="text" id="scan-manual-name" placeholder="Enter Full Name" data-placeholder="name">
+            <button class="btn" onclick="handleScanResult(document.getElementById('scan-manual-name').value)" data-i18n="confirm_out">Confirm Sign Out</button>
         </div>
-        <button class="btn btn-secondary" onclick="stopScanner(); showScreen('home-screen');">Back</button>
+        <button class="btn btn-secondary" onclick="stopScanner(); showScreen('home-screen');" data-i18n="back">Back</button>
     </div>
 
     <div id="thankyou-screen" class="view">
-        <h2 id="thankyou-msg">Thank you!</h2>
-        <p>Returning to home screen shortly...</p>
+        <h2 id="thankyou-msg" data-i18n="thank_you">Thank you!</h2>
+        <p data-i18n="returning_home">Returning to home screen shortly...</p>
     </div>
 
     <script>
         const PRINTNODE_API_KEY = 'LehZ1J7FDq_4U3OZJ3Q_xe4USU_CwSYi2FF9J7UPEZ8'; 
         const PRINTNODE_PRINTER_ID = '75315246';   
+
+        // Translation Dictionary
+        const translations = {
+            en: { welcome: "Welcome", safety_notice: "⚠️ Signing IN and OUT is mandatory for evacuation procedures.", sign_in: "Sign In", sign_out: "Sign Out", re_sign_in: "🔄 Re-Sign In (Scan Badge)", visit_as: "Who are you visiting as?", visitor: "Visitor", contractor: "Contractor", back: "Back", next: "Next", cancel: "Cancel", name: "Full Name", company: "Company Name", vehicle: "Vehicle Registration", contact: "F+F Contact Person", decline: "Decline", accept: "I Accept", extra_tasks: "Additional Tasks", select_permits: "Select permits required for your work:", work_desc: "Description of Work (Required)...", signature: "Signature", sign_below: "Please sign below to complete your entry:", clear: "Clear Signature", assist_req: "Assistance Required", decline_msg: "You have declined terms. A member of staff has been notified.", safety_out: "Please scan out so you are accounted for.", scan_qr: "Hold your badge QR code up to the camera", manual_entry: "OR enter name manually:", confirm_out: "Confirm Sign Out", thank_you: "Thank you!", returning_home: "Returning to home screen shortly..." },
+            fr: { welcome: "Bienvenue", safety_notice: "⚠️ L'entrée et la sortie sont obligatoires pour l'évacuation.", sign_in: "Se Connecter", sign_out: "Se Déconnecter", re_sign_in: "🔄 Se reconnecter (Badge)", visit_as: "Qui visitez-vous ?", visitor: "Visiteur", contractor: "Entrepreneur", back: "Retour", next: "Suivant", cancel: "Annuler", name: "Nom complet", company: "Nom de l'entreprise", vehicle: "Immatriculation", contact: "Personne de contact F+F", decline: "Refuser", accept: "J'accepte", extra_tasks: "Tâches supplémentaires", select_permits: "Sélectionnez les permis requis :", work_desc: "Description du travail...", signature: "Signature", sign_below: "Signez ci-dessous :", clear: "Effacer", assist_req: "Assistance requise", decline_msg: "Vous avez refusé les conditions. Un membre du personnel arrive.", safety_out: "Veuillez scanner pour sortir.", scan_qr: "Présentez le code QR à la caméra", manual_entry: "OU entrez le nom manuellement :", confirm_out: "Confirmer la sortie", thank_you: "Merci !", returning_home: "Retour à l'accueil..." },
+            es: { welcome: "Bienvenido", safety_notice: "⚠️ Registrarse al entrar y salir es obligatorio.", sign_in: "Entrada", sign_out: "Salida", re_sign_in: "🔄 Reingresar (Escanear)", visit_as: "¿Cómo nos visita?", visitor: "Visitante", contractor: "Contratista", back: "Atrás", next: "Siguiente", cancel: "Cancelar", name: "Nombre completo", company: "Empresa", vehicle: "Matrícula", contact: "Contacto de F+F", decline: "Rechazar", accept: "Acepto", extra_tasks: "Tareas adicionales", select_permits: "Seleccione los permisos necesarios:", work_desc: "Descripción del trabajo...", signature: "Firma", sign_below: "Firme a continuación:", clear: "Limpiar", assist_req: "Asistencia requerida", decline_msg: "Ha rechazado los términos. Alguien vendrá a ayudarle.", safety_out: "Por favor, regístrese al salir.", scan_qr: "Muestre el código QR a la cámara", manual_entry: "O ingrese el nombre manualmente:", confirm_out: "Confirmar salida", thank_you: "¡Gracias!", returning_home: "Volviendo al inicio..." },
+            de: { welcome: "Willkommen", safety_notice: "⚠️ An- und Abmelden ist für Evakuierungsverfahren obligatorisch.", sign_in: "Anmelden", sign_out: "Abmelden", re_sign_in: "🔄 Erneut anmelden (Badge)", visit_as: "Als was besuchen Sie uns?", visitor: "Besucher", contractor: "Auftragnehmer", back: "Zurück", next: "Weiter", cancel: "Abbrechen", name: "Vollständiger Name", company: "Firmenname", vehicle: "Fahrzeugkennzeichen", contact: "F+F Ansprechpartner", decline: "Ablehnen", accept: "Akzeptieren", extra_tasks: "Zusätzliche Aufgaben", select_permits: "Erforderliche Genehmigungen auswählen:", work_desc: "Arbeitsbeschreibung...", signature: "Unterschrift", sign_below: "Bitte unten unterschreiben:", clear: "Löschen", assist_req: "Hilfe benötigt", decline_msg: "Bedingungen abgelehnt. Bitte warten Sie hier.", safety_out: "Bitte zum Abmelden scannen.", scan_qr: "QR-Code vor die Kamera halten", manual_entry: "ODER Namen manuell eingeben:", confirm_out: "Abmeldung bestätigen", thank_you: "Vielen Dank!", returning_home: "Zurück zum Hauptbildschirm..." },
+            zh: { welcome: "欢迎", safety_notice: "⚠️ 为了疏散程序，必须登记进入和退出。", sign_in: "签到", sign_out: "签退", re_sign_in: "🔄 重新签到 (扫描徽章)", visit_as: "您的访问身份是？", visitor: "访客", contractor: "承包商", back: "返回", next: "下一步", cancel: "取消", name: "全名", company: "公司名称", vehicle: "车牌号", contact: "F+F 联系人", decline: "拒绝", accept: "我接受", extra_tasks: "额外任务", select_permits: "请选择所需的许可证：", work_desc: "工作描述 (必填)...", signature: "签名", sign_below: "请在下方签名：", clear: "清除签名", assist_req: "需要协助", decline_msg: "您已拒绝条款。请在此等候。", safety_out: "请签退以进行人数清点。", scan_qr: "请将徽章二维码对准摄像头", manual_entry: "或手动输入姓名：", confirm_out: "确认签退", thank_you: "谢谢！", returning_home: "即将返回主屏幕..." },
+            ar: { welcome: "أهلاً بك", safety_notice: "⚠️ تسجيل الدخول والخروج إلزامي لإجراءات الإخلاء.", sign_in: "تسجيل الدخول", sign_out: "تسجيل الخروج", re_sign_in: "🔄 إعادة الدخول (مسح الشارة)", visit_as: "ما هي صفة زيارتك؟", visitor: "زائر", contractor: "مقاول", back: "رجوع", next: "التالي", cancel: "إلغاء", name: "الاسم الكامل", company: "اسم الشركة", vehicle: "رقم السيارة", contact: "شخص الاتصال في F+F", decline: "رفض", accept: "أوافق", extra_tasks: "مهام إضافية", select_permits: "اختر التصاريح المطلوبة لعملك:", work_desc: "وصف العمل (مطلوب)...", signature: "التوقيع", sign_below: "يرجى التوقيع أدناه:", clear: "مسح التوقيع", assist_req: "مساعدة مطلوبة", decline_msg: "لقد رفضت الشروط. يرجى الانتظار هنا.", safety_out: "يرجى تسجيل الخروج ليتم احتسابك.", scan_qr: "ضع رمز QR أمام الكاميرا", manual_entry: "أو أدخل الاسم يدويًا:", confirm_out: "تأكيد الخروج", thank_you: "شكراً لك!", returning_home: "العودة للشاشة الرئيسية..." }
+        };
+
+        function openLanguageModal() { document.getElementById('language-modal').style.display = 'flex'; }
+        function closeLanguageModal() { document.getElementById('language-modal').style.display = 'none'; }
+
+        function setLanguage(lang) {
+            const t = translations[lang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) el.innerText = t[key];
+            });
+            document.querySelectorAll('[data-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-placeholder');
+                if (t[key]) el.placeholder = t[key];
+            });
+            closeLanguageModal();
+        }
 
         let currentVisitorType = '';
         let html5QrCode;
@@ -439,7 +447,6 @@
             doc.setFontSize(10);
             doc.text(vData.company, 27, 26, { align: 'center' });
 
-            // Generate QR specifically for the printer (In-Memory)
             const tempDiv = document.createElement("div");
             const sName = vData.name.substring(0, 20);
             const sCo = vData.company.substring(0, 20);
@@ -448,7 +455,6 @@
 
             new QRCode(tempDiv, { text: qrText, width: 128, height: 128, correctLevel: QRCode.CorrectLevel.L });
             
-            // Minimal delay to let QR canvas render in background
             setTimeout(async () => {
                 const qrCanvas = tempDiv.querySelector('canvas');
                 if (qrCanvas) {
@@ -525,11 +531,9 @@
             } catch (err) { console.error("Cloud Error:", err); }
         }
 
-        // OPTIMIZED FINALIZE FUNCTION
         async function finalizeSignIn() {
             if(signaturePad.isEmpty()) return alert("Please sign the pad.");
             
-            // 1. GATHER DATA IMMEDIATELY
             if (!isReturningVisitor) {
                 visitorData = {
                     type: currentVisitorType,
@@ -542,12 +546,8 @@
             }
             visitorData.signature = signaturePad.toDataURL(); 
 
-            // 2. TRIGGER PRINT IN BACKGROUND (Parallel Task)
-            if (!isReturningVisitor) {
-                sendToPrintNode(visitorData);
-            }
+            if (!isReturningVisitor) sendToPrintNode(visitorData);
 
-            // 3. CAPTURE PHOTO (If Contractor)
             if (currentVisitorType === 'Contractor') {
                 const video = document.getElementById('face-cam');
                 if (video.readyState === video.HAVE_ENOUGH_DATA) {
@@ -561,18 +561,15 @@
                 }
             }
 
-            // 4. TRANSITION TO THANK YOU IMMEDIATELY
             document.getElementById('thankyou-msg').innerText = `Thank you ${visitorData.name}, Welcome to F+F`;
             showScreen('thankyou-screen');
 
-            // 5. CLOUD UPLOAD (Async)
             let pdfStr = null;
             if (!isReturningVisitor && visitorData.type === 'Contractor') {
                 pdfStr = await generateContractorPDF(visitorData);
             }
             sendToCloud(visitorData, pdfStr, "SignIn");
 
-            // 6. AUTO-RESET
             setTimeout(() => { 
                 showScreen('home-screen'); 
                 signaturePad.clear(); 
