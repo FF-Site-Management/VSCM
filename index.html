@@ -185,9 +185,9 @@
         <p data-i18n="select_permits">Please select any specific permits required for your work today (Select all that apply):</p>
         <div class="checkbox-group">
             <label><input type="checkbox" class="extra-chk" id="chk-ra078"> 1. RA078 - Roof Working</label>
-            <label><input type="checkbox" class="extra-chk" id="chk-0"> 2. 0 - Permit to Work - Confined Spaces</label>
-            <label><input type="checkbox" class="extra-chk" id="chk-1"> 3. 1 - Permit to Work - Hot Works</label>
-            <label><input type="checkbox" class="extra-chk" id="chk-3"> 4. 3 - Permit to Work - Working at Height</label>
+            <label><input type="checkbox" class="extra-chk" id="chk-ff110"> 2. FF110 - Permit to Work - Confined Spaces</label>
+            <label><input type="checkbox" class="extra-chk" id="chk-ff111"> 3. FF111 - Permit to Work - Hot Works</label>
+            <label><input type="checkbox" class="extra-chk" id="chk-ff113"> 4. FF113 - Permit to Work - Working at Height</label>
         </div>
         <textarea id="work-description" placeholder="Description of Work (Required)..." data-placeholder="work_desc" rows="3" required></textarea>
         <button class="btn" onclick="submitExtraDocs()" data-i18n="next">Next</button>
@@ -380,8 +380,8 @@
         }
 
         function submitExtraDocs() {
-            const workDescription = document.getElementById('work-description').value.trim();
-            if (!workDescription) {
+            const workDescriptionVal = document.getElementById('work-description').value.trim();
+            if (!workDescriptionVal) {
                 alert("Please enter a Description of Work before proceeding.");
                 return;
             }
