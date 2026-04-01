@@ -272,10 +272,10 @@
         const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzYLFzYTCpzL2hLi4VsdgnPIXG-FRg8edQFNqzPJYEwYFxzDmGj1sSyKyROUdXRBuX1/exec"; 
 
         const contractorDocuments = [
-            { title: "1. FF156 Contractors Rules", file: "assets/FF156    Contractors Rules v2.0.jpg", text: "Contractor has read and accepted the FF156 Contractors Rules." },
-            { title: "2. FF157 Permit to Work", file: "assets/FF157    Permit to Work v2.0.jpg", text: "Contractor has read and accepted the FF157 Permit to Work." },
-            { title: "3. FF158 Contractor H&S Induction Form", file: "assets/FF158    Contractor H&S Induction Form.jpg", text: "Contractor has read and accepted the FF158 Contractor H&S Induction Form." },
-            { title: "4. RA069 SITE RA F&F", file: "assets/RA069    SITE RA F&F v8.0.jpg", text: "Contractor has read and accepted the RA069 SITE RA F&F." }
+            { title: "1. FF156 Contractors Rules", file: "assets/FF156   Contractors Rules v2.0.jpg", text: "Contractor has read and accepted the FF156 Contractors Rules." },
+            { title: "2. FF157 Permit to Work", file: "assets/FF157   Permit to Work v2.0.jpg", text: "Contractor has read and accepted the FF157 Permit to Work." },
+            { title: "3. FF158 Contractor H&S Induction Form", file: "assets/FF158   Contractor H&S Induction Form.jpg", text: "Contractor has read and accepted the FF158 Contractor H&S Induction Form." },
+            { title: "4. RA069 SITE RA F&F", file: "assets/RA069   SITE RA F&F v8.0.jpg", text: "Contractor has read and accepted the RA069 SITE RA F&F." }
         ];
 
         let isReviewingExtra = false;
@@ -390,17 +390,18 @@
 
             selectedExtraDocs = [];
             if (document.getElementById('chk-ra078').checked) {
-                selectedExtraDocs.push({ title: "RA078 - Roof Working", file: "assets/RA078    Roof Working v4.0.jpg", text: "Contractor has read and accepted RA078 - Roof Working." });
+                selectedExtraDocs.push({ title: "RA078 - Roof Working", file: "assets/RA078   Roof Working v4.0.jpg", text: "Contractor has read and accepted RA078 - Roof Working." });
             }
             if (document.getElementById('chk-ff110').checked) {
-                selectedExtraDocs.push({ title: "FF110 - Permit to Work - Confined Spaces", file: "assets/FF110    Permit to Work - Confined Spaces v2.0.jpg", text: "Contractor has read and accepted FF110 - Permit to Work - Confined Spaces." });
+                selectedExtraDocs.push({ title: "FF110 - Permit to Work - Confined Spaces", file: "assets/FF110   Permit to Work - Confined Spaces v2.0.jpg", text: "Contractor has read and accepted FF110 - Permit to Work - Confined Spaces." });
             }
             if (document.getElementById('chk-ff111').checked) {
-                selectedExtraDocs.push({ title: "FF111 - Permit to Work - Hot Works", file: "assets/FF111    Permit to Work - Hot Works v2.0.jpg", text: "Contractor has read and accepted FF111 - Permit to Work - Hot Works." });
+                selectedExtraDocs.push({ title: "FF111 - Permit to Work - Hot Works", file: "assets/FF111   Permit to Work - Hot Works v2.0.jpg", text: "Contractor has read and accepted FF111 - Permit to Work - Hot Works." });
             }
             if (document.getElementById('chk-ff113').checked) {
                 selectedExtraDocs.push({ title: "FF113 - Permit to Work - Working at Height", file: "assets/FF113 Permit to Work - Working at Height v3.0.jpg", text: "Contractor has read and accepted FF113 - Permit to Work - Working at Height." });
             }
+
 
             if (selectedExtraDocs.length > 0) {
                 isReviewingExtra = true;
