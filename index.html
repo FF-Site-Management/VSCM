@@ -463,21 +463,30 @@
         async function sendToPrintNode(vData) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ unit: 'mm', format: [54, 86] });
-            const logo = new Image();
-            logo.src = 'assets/newlogo.jpeg';
-            doc.addImage(logo, 'JPEG', 6, 2, 42, 12);
+            
+            // GUARANTEE the logo is fully loaded before drawing it
+            await new Promise((resolve) => {
+                const logo = new Image();
+                logo.onload = () => { doc.addImage(logo, 'JPEG', 6, 2, 42, 12); resolve(); };
+                logo.onerror = resolve; 
+                logo.src = 'assets/newlogo.jpeg';
+            });
+        
             const nameParts = vData.name.trim().split(' ');
             const printName = nameParts.length > 1 ? `${nameParts[0]} ${nameParts[nameParts.length - 1].charAt(0)}.` : nameParts[0];
             doc.setFontSize(14);
             doc.text(printName.toUpperCase(), 27, 20, { align: 'center' });
             doc.setFontSize(10);
             doc.text(vData.company, 27, 26, { align: 'center' });
+            
             const tempDiv = document.createElement("div");
             const sName = vData.name.substring(0, 20);
             const sCo = vData.company.substring(0, 20);
             const sContact = vData.contact.substring(0, 15);
             const qrText = `${sName}|${vData.type}|${sCo}|${vData.vehicle}|${sContact}`;
             new QRCode(tempDiv, { text: qrText, width: 128, height: 128, correctLevel: QRCode.CorrectLevel.L });
+            
+            // Wait 300ms for the QR canvas to fully render to prevent printer crashes
             setTimeout(async () => {
                 const qrCanvas = tempDiv.querySelector('canvas');
                 if (qrCanvas) {
@@ -486,6 +495,7 @@
                 doc.setLineWidth(0.5);
                 doc.line(5, 74, 49, 74);
                 doc.text("F+F " + vData.type.toUpperCase(), 27, 81, { align: 'center' });
+                
                 const base64PDF = doc.output('datauristring').split(',')[1];
                 try {
                     await fetch('https://api.printnode.com/printjobs', {
@@ -503,7 +513,7 @@
                         })
                     });
                 } catch (err) { console.error("Print Error:", err); }
-            }, 50);
+            }, 300); 
         }
 
         async function generateContractorPDF(data) {
@@ -511,8 +521,15 @@
             const doc = new jsPDF();
             const now = new Date();
             const timestamp = now.toLocaleDateString() + " " + now.toLocaleTimeString();
+            
+            // GUARANTEE the logo is fully loaded before drawing it
             const logoImg = new Image();
-            logoImg.src = 'assets/newlogo.jpeg';
+            await new Promise((resolve) => {
+                logoImg.onload = resolve;
+                logoImg.onerror = resolve;
+                logoImg.src = 'assets/newlogo.jpeg';
+            });
+        
             const allDocsToSign = contractorDocuments.concat(selectedExtraDocs || []);
             allDocsToSign.forEach((docItem, index) => {
                 if (index > 0) doc.addPage();
