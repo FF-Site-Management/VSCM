@@ -255,9 +255,37 @@
     </div>
 
     <script>
-        const PRINTNODE_API_KEY = 'LehZ1J7FDq_4U3OZJ3Q_xe4USU_CwSYi2FF9J7UPEZ8'; 
-        const PRINTNODE_PRINTER_ID = '75315246';   
+        function clearKioskData() {
+            // 1. Empty all physical text boxes and inputs
+            const allInputs = document.querySelectorAll('input');
+            allInputs.forEach(input => {
+                if (input.type === 'text' || input.type === 'email' || input.type === 'search') {
+                    input.value = '';
+                } else if (input.type === 'checkbox' || input.type === 'radio') {
+                    input.checked = false;
+                }
+            });
+        
+            // 2. Empty the Work Description text area (if applicable)
+            const allTextareas = document.querySelectorAll('textarea');
+            allTextareas.forEach(ta => {
+                ta.value = '';
+            });
 
+            // 3. Reset your global data variable
+            if (typeof vData !== 'undefined') {
+                vData = {};
+            }
+        
+            // 4. Clear the signature pad (if you are using SignaturePad.js)
+            if (typeof signaturePad !== 'undefined' && signaturePad) {
+                signaturePad.clear();
+            }
+        }
+
+        const PRINTNODE_API_KEY = 'LehZ1J7FDq_4U3OZJ3Q_xe4USU_CwSYi2FF9J7UPEZ8'; 
+        const PRINTNODE_PRINTER_ID = '75315246';
+        
         const translations = {
             en: { welcome: "Welcome", safety_notice: "⚠️ Signing IN and OUT is mandatory for evacuation procedures.", sign_in: "Sign In", sign_out: "Sign Out", re_sign_in: "🔄 Re-Sign In (Scan Badge)", visit_as: "Who are you visiting as?", visitor: "Visitor", contractor: "Contractor", back: "Back", next: "Next", cancel: "Cancel", name: "Full Name", company: "Company Name", vehicle: "Vehicle Registration", contact: "F+F Contact Person", decline: "Decline", accept: "I Accept", extra_tasks: "Additional Tasks", select_permits: "Select permits required for your work:", work_desc: "Description of Work (Required)...", signature: "Signature", sign_below: "Please sign below to complete your entry:", clear: "Clear Signature", assist_req: "Assistance Required", decline_msg: "You have declined terms. A member of staff has been notified.", safety_out: "Please scan out so you are accounted for.", scan_qr: "Hold your badge QR code up to the camera", manual_entry: "OR enter name manually:", confirm_out: "Confirm Sign Out", thank_you: "Thank you!", returning_home: "Returning to home screen shortly..." },
             fr: { welcome: "Bienvenue", safety_notice: "⚠️ L'entrée et la sortie sont obligatoires pour l'évacuation.", sign_in: "Se Connecter", sign_out: "Se Déconnecter", re_sign_in: "🔄 Se reconnecter (Badge)", visit_as: "Qui visitez-vous ?", visitor: "Visiteur", contractor: "Entrepreneur", back: "Retour", next: "Suivant", cancel: "Annuler", name: "Nom complet", company: "Nom de l'entreprise", vehicle: "Immatriculation", contact: "Personne de contact F+F", decline: "Refuser", accept: "J'accepte", extra_tasks: "Tâches supplémentaires", select_permits: "Sélectionnez les permis requis :", work_desc: "Description du travail...", signature: "Signature", sign_below: "Signez ci-dessous :", clear: "Effacer", assist_req: "Assistance requise", decline_msg: "Vous avez refusé les conditions. Un membre du personnel arrive.", safety_out: "Veuillez scanner pour sortir.", scan_qr: "Présentez le code QR à la caméra", manual_entry: "OU entrez le nom manuellement :", confirm_out: "Confirmer la sortie", thank_you: "Merci !", returning_home: "Retour à l'accueil..." },
@@ -266,7 +294,7 @@
             it: { welcome: "Benvenuti", safety_notice: "⚠️ Registrare l'entrata e l'uscita è obbligatorio per le procedure di evacuazione.", sign_in: "Entrata", sign_out: "Uscita", re_sign_in: "🔄 Rientrare (Scansione)", visit_as: "Come ci visiti?", visitor: "Visitatore", contractor: "Appaltatore", back: "Indietro", next: "Avanti", cancel: "Annulla", name: "Nome e Cognome", company: "Azienda", vehicle: "Targa Veicolo", contact: "Referente F+F", decline: "Rifiuta", accept: "Accetto", extra_tasks: "Attività extra", select_permits: "Seleziona i permessi richiesti:", work_desc: "Descrizione del lavoro...", signature: "Firma", sign_below: "Firma qui sotto:", clear: "Cancella", assist_req: "Assistenza richiesta", decline_msg: "Hai rifiutato i termini. Attendi qui.", safety_out: "Scansiona per uscire.", scan_qr: "Inquadra il codice QR", manual_entry: "O inserisci il nome:", confirm_out: "Conferma uscita", thank_you: "Grazie!", returning_home: "Ritorno alla home..." },
             pt: { welcome: "Bem-vindo", safety_notice: "⚠️ A entrada e saída são obrigatórias para procedimentos de evacuação.", sign_in: "Entrar", sign_out: "Sair", re_sign_in: "🔄 Reentrar (Escanear)", visit_as: "Tipo de visita?", visitor: "Visitante", contractor: "Contratista", back: "Voltar", next: "Próximo", cancel: "Cancelar", name: "Nome Completo", company: "Empresa", vehicle: "Matrícula", contact: "Contacto F+F", decline: "Recusar", accept: "Aceito", extra_tasks: "Tarefas Adicionais", select_permits: "Selecione as autorizações:", work_desc: "Descrição do trabalho...", signature: "Assinatura", sign_below: "Assine abaixo:", clear: "Limpar", assist_req: "Assistência Necessária", decline_msg: "Recusou os termos. Aguarde aqui.", safety_out: "Por favor, saia pelo sistema.", scan_qr: "Mostre o código QR", manual_entry: "Ou nome manual:", confirm_out: "Confirmar Saída", thank_you: "Obrigado!", returning_home: "Voltando ao início..." },
             pl: { welcome: "Witaj", safety_notice: "⚠️ Rejestracja wejścia i wyjścia jest obowiązkowa.", sign_in: "Wejście", sign_out: "Wyjście", re_sign_in: "🔄 Ponowne wejście", visit_as: "Cel wizyty?", visitor: "Gość", contractor: "Wykonawca", back: "Wstecz", next: "Dalej", cancel: "Anuluj", name: "Imię i Nazwisko", company: "Nazwa firmy", vehicle: "Numer rejestracyjny", contact: "Osoba kontaktowa", decline: "Odrzuć", accept: "Akceptuję", extra_tasks: "Zadania dodatkowe", select_permits: "Wybierz pozwolenia:", work_desc: "Opis prac...", signature: "Podpis", sign_below: "Podpisz się poniżej:", clear: "Wyczyść", assist_req: "Wymagana pomoc", decline_msg: "Odrzucono warunki. Prośba o czekanie.", safety_out: "Zeskanuj wyjście.", scan_qr: "Pokaż kod QR do kamery", manual_entry: "Lub wpisz imię:", confirm_out: "Potwierdź wyjście", thank_you: "Dziękujemy!", returning_home: "Powrót do menu..." },
-            nl: { welcome: "Welkom", safety_notice: "⚠️ In- en uitchecken is verplicht voor evacuatieprocedures.", sign_in: "Inchecken", sign_out: "Uitchecken", re_sign_in: "🔄 Opnieuw inchecken", visit_as: "Als wat bezoekt u ons?", visitor: "Besuiker", contractor: "Aannemer", back: "Terug", next: "Volgende", cancel: "Annuleren", name: "Volledige naam", company: "Bedrijfsnaam", vehicle: "Kenteken", contact: "F+F Contactpersoon", decline: "Weigeren", accept: "Ik accepteer", extra_tasks: "Extra taken", select_permits: "Selecteer vergunningen:", work_desc: "Werkomschrijving...", signature: "Handtekening", sign_below: "Teken hieronder:", clear: "Wissen", assist_req: "Hulp nodig", decline_msg: "U heeft de voorwaarden geweigerd.", safety_out: "Scan uit voor veiligheid.", scan_qr: "Houd QR-code voor de camera", manual_entry: "Of handmatig invoeren:", confirm_out: "Bevestig uitchecken", thank_you: "Bedankt!", returning_home: "Terug naar startscherm..." },
+            nl: { welcome: "Welkom", safety_notice: "⚠️ In- en uitchecken is verplicht voor evacuatieprocedures.", sign_in: "Inchecken", sign_out: "Uitchecken", re_sign_in: "🔄 Opnieuw inchecken", visit_as: "Als wat bezoekt u ons?", visitor: "Bezoeker", contractor: "Aannemer", back: "Terug", next: "Volgende", cancel: "Annuleren", name: "Volledige naam", company: "Bedrijfsnaam", vehicle: "Kenteken", contact: "F+F Contactpersoon", decline: "Weigeren", accept: "Ik accepteer", extra_tasks: "Extra taken", select_permits: "Selecteer vergunningen:", work_desc: "Werkomschrijving...", signature: "Handtekening", sign_below: "Teken hieronder:", clear: "Wissen", assist_req: "Hulp nodig", decline_msg: "U heeft de voorwaarden geweigerd.", safety_out: "Scan uit voor veiligheid.", scan_qr: "Houd QR-code voor de camera", manual_entry: "Of handmatig invoeren:", confirm_out: "Bevestig uitchecken", thank_you: "Bedankt!", returning_home: "Terug naar startscherm..." },
             zh: { welcome: "欢迎", safety_notice: "⚠️ 为了疏散程序，必须登记进入和退出。", sign_in: "签到", sign_out: "签退", re_sign_in: "🔄 重新签到 (扫描徽章)", visit_as: "您的访问身份是？", visitor: "访客", contractor: "承包商", back: "返回", next: "下一步", cancel: "取消", name: "全名", company: "公司名称", vehicle: "车牌号", contact: "F+F 联系人", decline: "拒绝", accept: "我接受", extra_tasks: "额外任务", select_permits: "请选择所需的许可证：", work_desc: "工作描述 (必填)...", signature: "签名", sign_below: "请在下方签名：", clear: "清除签名", assist_req: "需要协助", decline_msg: "您已拒绝条款。请在此等候。", safety_out: "请签退以进行人数清点。", scan_qr: "请将徽章二维码对准摄像头", manual_entry: "或手动输入姓名：", confirm_out: "确认签退", thank_you: "谢谢！", returning_home: "即将返回主屏幕..." },
             ja: { welcome: "ようこそ", safety_notice: "⚠️ 避難手順のため、入退館の記録は必須です。", sign_in: "チェックイン", sign_out: "チェックアウト", re_sign_in: "🔄 再入場 (スキャン)", visit_as: "ご来館の目的は？", visitor: "訪問者", contractor: "業者", back: "戻る", next: "次へ", cancel: "キャンセル", name: "氏名", company: "会社名", vehicle: "車両番号", contact: "F+F 担当者", decline: "辞退", accept: "同意する", extra_tasks: "追加タスク", select_permits: "必要な許可証を選択:", work_desc: "作業内容...", signature: "署名", sign_below: "以下に署名してください:", clear: "クリア", assist_req: "係員をお呼びください", decline_msg: "規約に同意されませんでした。お待ちください。", safety_out: "退館スキャンをお願いします。", scan_qr: "QRコードをかざしてください", manual_entry: "または氏名を入力:", confirm_out: "退職を確定する", thank_you: "ありがとうございました", returning_home: "ホームに戻ります..." },
             hi: { welcome: "नमस्ते", safety_notice: "⚠️ निकासी प्रक्रियाओं के लिए साइन इन और आउट करना अनिवार्य है।", sign_in: "साइन इन", sign_out: "साइन आउट", re_sign_in: "🔄 फिर से साइन इन करें", visit_as: "आप किस रूप में आए हैं?", visitor: "आगंतुक", contractor: "ठेकेदार", back: "वापस", next: "आगे", cancel: "रद्द करें", name: "पूरा नाम", company: "कंपनी का नाम", vehicle: "वाहन पंजीकरण", contact: "संपर्क व्यक्ति", decline: "अस्वीकार", accept: "स्वीकार करें", extra_tasks: "अतिरिक्त कार्य", select_permits: "अनुमति चुनें:", work_desc: "कार्य का विवरण...", signature: "हस्ताक्षर", sign_below: "कृपया नीचे हस्ताक्षर करें:", clear: "साफ करें", assist_req: "सहायता की आवश्यकता है", decline_msg: "आपने शर्तों को अस्वीकार कर दिया है।", safety_out: "कृपया साइन आउट करें।", scan_qr: "क्यूआर कोड दिखाएं", manual_entry: "या नाम दर्ज करें:", confirm_out: "साइन आउट की पुष्टि करें", thank_you: "धन्यवाद!", returning_home: "होम स्क्रीन पर वापस जा रहे हैं..." },
@@ -319,13 +347,19 @@
                 const gainNode = audioCtx.createGain();
                 oscillator.type = 'sine'; oscillator.frequency.setValueAtTime(1046.50, audioCtx.currentTime); 
                 oscillator.frequency.exponentialRampToValueAtTime(2000, audioCtx.currentTime + 0.1);
-                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
                 oscillator.connect(gainNode); gainNode.connect(audioCtx.destination);
                 oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.2);
             } catch(e) { console.log("Audio blocked."); }
         }
 
         function showScreen(screenId) {
+            // WIPE ALL KIOSK DATA WHENEVER ROUTING BACK TO THE HOME SCREEN
+            if (screenId === 'home-screen') {
+                clearKioskData();
+            }
+
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
             document.getElementById('document-modal').style.display = 'none';
@@ -333,8 +367,7 @@
             if (screenId === 'signature-screen') {
                 const faceGuide = document.getElementById('face-guide');
                 faceGuide.style.display = (currentVisitorType === 'Contractor') ? 'block' : 'none';
-                faceGuide.style.borderColor = '#dc3545'; 
-                
+                faceGuide.style.borderColor = '#dc3545';
                 navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
                     .then(stream => { document.getElementById('face-cam').srcObject = stream; })
                     .catch(err => console.log("Camera blocked."));
@@ -352,10 +385,9 @@
             canvas.width = canvas.offsetWidth * ratio;
             canvas.height = canvas.offsetHeight * ratio;
             canvas.getContext("2d").scale(ratio, ratio);
-            signaturePad.clear(); 
+            signaturePad.clear();
         }
         window.onresize = resizeCanvas;
-
         function startForm(type) {
             isReturningVisitor = false;
             currentVisitorType = type;
@@ -375,9 +407,11 @@
             if(!name || !company || !contact) { alert("Please fill in all fields."); return; }
 
             if (currentVisitorType === 'Contractor') {
-                currentDocIndex = 0; loadDocument();
+                currentDocIndex = 0;
+                loadDocument();
             } else {
-                showScreen('signature-screen'); setTimeout(resizeCanvas, 100);
+                showScreen('signature-screen');
+                setTimeout(resizeCanvas, 100);
             }
         }
 
@@ -393,7 +427,7 @@
             if (!isReviewingExtra) {
                 currentDocIndex++;
                 if (currentDocIndex < contractorDocuments.length) { 
-                    loadDocument(); 
+                    loadDocument();
                 } else {
                     document.getElementById('document-modal').style.display = 'none';
                     document.getElementById('work-description').value = '';
@@ -403,7 +437,7 @@
             } else {
                 extraDocIndex++;
                 if (extraDocIndex < selectedExtraDocs.length) { 
-                    loadExtraDocument(); 
+                    loadExtraDocument();
                 } else {
                     document.getElementById('document-modal').style.display = 'none';
                     showScreen('signature-screen'); setTimeout(resizeCanvas, 100);
@@ -457,21 +491,20 @@
             document.getElementById('declined-doc-name').innerText = declinedTitle;
             showScreen('decline-screen');
             sendToCloud({ name: name, declinedDoc: declinedTitle }, null, "DeclineNotify");
-            setTimeout(() => { showScreen('home-screen'); }, 15000); 
+            setTimeout(() => { showScreen('home-screen'); }, 15000);
         }
 
         async function sendToPrintNode(vData) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ unit: 'mm', format: [54, 86] });
-            
             // GUARANTEE the logo is fully loaded before drawing it
             await new Promise((resolve) => {
                 const logo = new Image();
                 logo.onload = () => { doc.addImage(logo, 'JPEG', 6, 2, 42, 12); resolve(); };
                 logo.onerror = resolve; 
+        
                 logo.src = 'assets/newlogo.jpeg';
             });
-        
             const nameParts = vData.name.trim().split(' ');
             const printName = nameParts.length > 1 ? `${nameParts[0]} ${nameParts[nameParts.length - 1].charAt(0)}.` : nameParts[0];
             doc.setFontSize(14);
@@ -485,35 +518,39 @@
             const sContact = vData.contact.substring(0, 15);
             const qrText = `${sName}|${vData.type}|${sCo}|${vData.vehicle}|${sContact}`;
             new QRCode(tempDiv, { text: qrText, width: 128, height: 128, correctLevel: QRCode.CorrectLevel.L });
-            
             // Wait 300ms for the QR canvas to fully render to prevent printer crashes
             setTimeout(async () => {
                 const qrCanvas = tempDiv.querySelector('canvas');
                 if (qrCanvas) {
                     doc.addImage(qrCanvas.toDataURL("image/png"), 'PNG', 6, 28, 42, 42);
+          
                 }
                 doc.setLineWidth(0.5);
                 doc.line(5, 74, 49, 74);
                 doc.text("F+F " + vData.type.toUpperCase(), 27, 81, { align: 'center' });
                 
-                const base64PDF = doc.output('datauristring').split(',')[1];
+                const base64PDF 
+                = doc.output('datauristring').split(',')[1];
                 try {
                     await fetch('https://api.printnode.com/printjobs', {
                         method: 'POST',
                         headers: {
+          
                             'Content-Type': 'application/json',
                             'Authorization': 'Basic ' + btoa(PRINTNODE_API_KEY + ':')
                         },
+                       
                         body: JSON.stringify({
                             "printerId": PRINTNODE_PRINTER_ID,
                             "title": "Badge: " + vData.name,
                             "contentType": "pdf_base64",
+        
                             "content": base64PDF,
                             "source": "F+F Kiosk"
                         })
                     });
                 } catch (err) { console.error("Print Error:", err); }
-            }, 300); 
+            }, 300);
         }
 
         async function generateContractorPDF(data) {
@@ -521,7 +558,6 @@
             const doc = new jsPDF();
             const now = new Date();
             const timestamp = now.toLocaleDateString() + " " + now.toLocaleTimeString();
-            
             // GUARANTEE the logo is fully loaded before drawing it
             const logoImg = new Image();
             await new Promise((resolve) => {
@@ -529,23 +565,25 @@
                 logoImg.onerror = resolve;
                 logoImg.src = 'assets/newlogo.jpeg';
             });
-        
             const allDocsToSign = contractorDocuments.concat(selectedExtraDocs || []);
             allDocsToSign.forEach((docItem, index) => {
                 if (index > 0) doc.addPage();
                 doc.addImage(logoImg, 'PNG', 85, 5, 40, 15); 
                 doc.setFontSize(18);
                 doc.text("Foster + Freeman Contractor Agreement", 105, 30, { align: "center" });
+       
                 if (data.photoData) doc.addImage(data.photoData, 'JPEG', 160, 40, 30, 40);
                 doc.setFontSize(14); 
                 doc.text(docItem.title, 20, 45);
                 doc.setFontSize(11);
                 const splitText = doc.splitTextToSize(docItem.text, 130);
+             
                 doc.text(splitText, 20, 55);
                 if (data.workDescription) {
                     doc.setFontSize(11);
                     doc.text("Description of Work:", 20, 165);
                     doc.setFontSize(10);
+             
                     const splitDesc = doc.splitTextToSize(data.workDescription, 130);
                     doc.text(splitDesc, 20, 172);
                 }
@@ -553,7 +591,7 @@
                 doc.text(`Signed by: ${data.name} | Date: ${timestamp}`, 20, 190);
                 doc.addImage(data.signature, 'PNG', 130, 185, 50, 20); 
             });
-            return doc.output('datauristring').split(',')[1]; 
+            return doc.output('datauristring').split(',')[1];
         }
 
         async function sendToCloud(data, pdfBase64, action = "SignIn") {
@@ -569,9 +607,11 @@
                     type: currentVisitorType,
                     name: document.getElementById('name').value.trim(),
                     company: document.getElementById('company').value.trim(),
+                 
                     vehicle: document.getElementById('vehicle').value.trim(),
                     contact: document.getElementById('contact').value.trim(),
-                    workDescription: document.getElementById('work-description') ? document.getElementById('work-description').value.trim() : ""
+                    workDescription: document.getElementById('work-description') ?
+                        document.getElementById('work-description').value.trim() : ""
                 };
             }
             visitorData.signature = signaturePad.toDataURL(); 
@@ -604,10 +644,12 @@
             document.getElementById('safety-reminder-out').style.display = (mode === 'SignOut') ? "block" : "none";
             showScreen('scan-screen');
             html5QrCode = new Html5Qrcode("reader");
-            try { await html5QrCode.start({ facingMode: "user" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (text) => handleScanResult(text)); } catch (err) {}
+            try { await html5QrCode.start({ facingMode: "user" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (text) => handleScanResult(text));
+            } catch (err) {}
         }
 
-        function stopScanner() { if (html5QrCode && html5QrCode.isScanning) html5QrCode.stop().then(() => html5QrCode.clear()); }
+        function stopScanner() { if (html5QrCode && html5QrCode.isScanning) html5QrCode.stop().then(() => html5QrCode.clear());
+        }
 
         function handleScanResult(identifier) {
             if (!identifier) return;
