@@ -252,7 +252,7 @@
         <p id="sig-welcome" style="font-size: 1.2em;" data-i18n="sign_below">Please sign below to complete your entry:</p>
         <canvas id="signature-pad"></canvas>
         <button class="btn btn-secondary" style="padding: 10px; font-size: 1em; margin-top: 10px;" onclick="signaturePad.clear()" data-i18n="clear">Clear Signature</button>
-        <button class="btn" onclick="finalizeSignIn()" data-i18n="sign_in">Sign In</button>
+        <button id="final-submit-btn" class="btn" onclick="finalizeSignIn()" data-i18n="sign_in">Sign In</button>
     </div>
 
     <div id="decline-screen" class="view">
@@ -269,7 +269,7 @@
         <div style="margin-top: 20px;">
             <p data-i18n="manual_entry">OR enter name manually:</p>
             <input type="text" id="scan-manual-name" placeholder="Enter Full Name" data-placeholder="name">
-            <button class="btn" onclick="handleScanResult(document.getElementById('scan-manual-name').value)" data-i18n="confirm_out">Confirm Sign Out</button>
+            <button id="manual-scan-btn" class="btn" onclick="handleScanResult(document.getElementById('scan-manual-name').value)" data-i18n="confirm_out">Confirm Sign Out</button>
         </div>
         <button class="btn btn-secondary" onclick="stopScanner(); showScreen('home-screen');" data-i18n="back">Back</button>
     </div>
@@ -281,7 +281,6 @@
 
     <script>
         function clearKioskData() {
-            // 1. Empty all physical text boxes and inputs
             const allInputs = document.querySelectorAll('input');
             allInputs.forEach(input => {
                 if (input.type === 'text' || input.type === 'email' || input.type === 'search') {
@@ -290,31 +289,19 @@
                     input.checked = false;
                 }
             });
-        
-            // 2. Empty the Work Description text area (if applicable)
             const allTextareas = document.querySelectorAll('textarea');
-            allTextareas.forEach(ta => {
-                ta.value = '';
-            });
+            allTextareas.forEach(ta => ta.value = '');
 
-            // 3. Reset your global data variables (Fixes the data sticking issue)
-            if (typeof visitorData !== 'undefined') {
-                visitorData = {};
-            }
-            if (typeof isReturningVisitor !== 'undefined') {
-                isReturningVisitor = false;
-            }
+            if (typeof visitorData !== 'undefined') visitorData = {};
+            if (typeof isReturningVisitor !== 'undefined') isReturningVisitor = false;
             
-            // 4. Reset the visual text on the signature screen (Fixes the ghost name issue)
             const sigWelcome = document.getElementById('sig-welcome');
-            if (sigWelcome) {
-                sigWelcome.innerText = "Please sign below to complete your entry:";
-            }
-        
-            // 5. Clear the signature pad
-            if (typeof signaturePad !== 'undefined' && signaturePad) {
-                signaturePad.clear();
-            }
+            if (sigWelcome) sigWelcome.innerText = "Please sign below to complete your entry:";
+            
+            const finalBtn = document.getElementById('final-submit-btn');
+            if (finalBtn) finalBtn.setAttribute('data-i18n', 'sign_in');
+
+            if (typeof signaturePad !== 'undefined' && signaturePad) signaturePad.clear();
         }
 
         const PRINTNODE_API_KEY = 'LehZ1J7FDq_4U3OZJ3Q_xe4USU_CwSYi2FF9J7UPEZ8'; 
@@ -389,11 +376,7 @@
         }
 
         function showScreen(screenId) {
-            // WIPE ALL KIOSK DATA WHENEVER ROUTING BACK TO THE HOME SCREEN
-            if (screenId === 'home-screen') {
-                clearKioskData();
-            }
-
+            if (screenId === 'home-screen') clearKioskData();
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
             document.getElementById('document-modal').style.display = 'none';
@@ -482,24 +465,13 @@
 
         function submitExtraDocs() {
             const workDescriptionVal = document.getElementById('work-description').value.trim();
-            if (!workDescriptionVal) {
-                alert("Please enter a Description of Work before proceeding.");
-                return;
-            }
+            if (!workDescriptionVal) { alert("Please enter a Description of Work before proceeding."); return; }
 
             selectedExtraDocs = [];
-            if (document.getElementById('chk-ra078').checked) {
-                selectedExtraDocs.push({ title: "RA078 - Roof Working", file: "assets/RA078   Roof Working v4.0.jpg", text: "Contractor has read and accepted RA078 - Roof Working." });
-            }
-            if (document.getElementById('chk-ff110').checked) {
-                selectedExtraDocs.push({ title: "FF110 - Permit to Work - Confined Spaces", file: "assets/FF110   Permit to Work - Confined Spaces v2.0.jpg", text: "Contractor has read and accepted FF110 - Permit to Work - Confined Spaces." });
-            }
-            if (document.getElementById('chk-ff111').checked) {
-                selectedExtraDocs.push({ title: "FF111 - Permit to Work - Hot Works", file: "assets/FF111   Permit to Work - Hot Works v2.0.jpg", text: "Contractor has read and accepted FF111 - Permit to Work - Hot Works." });
-            }
-            if (document.getElementById('chk-ff113').checked) {
-                selectedExtraDocs.push({ title: "FF113 - Permit to Work - Working at Height", file: "assets/FF113 Permit to Work - Working at Height v3.0.jpg", text: "Contractor has read and accepted FF113 - Permit to Work - Working at Height." });
-            }
+            if (document.getElementById('chk-ra078').checked) selectedExtraDocs.push({ title: "RA078 - Roof Working", file: "assets/RA078   Roof Working v4.0.jpg", text: "Contractor has read and accepted RA078 - Roof Working." });
+            if (document.getElementById('chk-ff110').checked) selectedExtraDocs.push({ title: "FF110 - Permit to Work - Confined Spaces", file: "assets/FF110   Permit to Work - Confined Spaces v2.0.jpg", text: "Contractor has read and accepted FF110 - Permit to Work - Confined Spaces." });
+            if (document.getElementById('chk-ff111').checked) selectedExtraDocs.push({ title: "FF111 - Permit to Work - Hot Works", file: "assets/FF111   Permit to Work - Hot Works v2.0.jpg", text: "Contractor has read and accepted FF111 - Permit to Work - Hot Works." });
+            if (document.getElementById('chk-ff113').checked) selectedExtraDocs.push({ title: "FF113 - Permit to Work - Working at Height", file: "assets/FF113 Permit to Work - Working at Height v3.0.jpg", text: "Contractor has read and accepted FF113 - Permit to Work - Working at Height." });
 
             if (selectedExtraDocs.length > 0) {
                 isReviewingExtra = true;
@@ -522,7 +494,6 @@
         function declineTerms() {
             const name = document.getElementById('name').value.trim();
             const declinedTitle = !isReviewingExtra ? contractorDocuments[currentDocIndex].title : selectedExtraDocs[extraDocIndex].title;
-            
             document.getElementById('document-modal').style.display = 'none';
             document.getElementById('declined-doc-name').innerText = declinedTitle;
             showScreen('decline-screen');
@@ -533,108 +504,65 @@
         async function sendToPrintNode(vData) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ unit: 'mm', format: [54, 86] });
-            
-            // GUARANTEE the logo is fully loaded before drawing it
             await new Promise((resolve) => {
                 const logo = new Image();
                 logo.onload = () => { doc.addImage(logo, 'JPEG', 6, 2, 42, 12); resolve(); };
                 logo.onerror = resolve; 
                 logo.src = 'assets/newlogo.jpeg';
             });
-            
             const nameParts = vData.name.trim().split(' ');
             const printName = nameParts.length > 1 ? `${nameParts[0]} ${nameParts[nameParts.length - 1].charAt(0)}.` : nameParts[0];
-            doc.setFontSize(14);
-            doc.text(printName.toUpperCase(), 27, 20, { align: 'center' });
-            doc.setFontSize(10);
-            doc.text(vData.company, 27, 26, { align: 'center' });
-            
+            doc.setFontSize(14); doc.text(printName.toUpperCase(), 27, 20, { align: 'center' });
+            doc.setFontSize(10); doc.text(vData.company, 27, 26, { align: 'center' });
             const tempDiv = document.createElement("div");
-            const sName = vData.name.substring(0, 20);
-            const sCo = vData.company.substring(0, 20);
-            const sContact = vData.contact.substring(0, 15);
+            const sName = vData.name.substring(0, 20); const sCo = vData.company.substring(0, 20); const sContact = vData.contact.substring(0, 15);
             const qrText = `${sName}|${vData.type}|${sCo}|${vData.vehicle}|${sContact}`;
             new QRCode(tempDiv, { text: qrText, width: 128, height: 128, correctLevel: QRCode.CorrectLevel.L });
-            
-            // Wait 300ms for the QR canvas to fully render to prevent printer crashes
             setTimeout(async () => {
                 const qrCanvas = tempDiv.querySelector('canvas');
-                if (qrCanvas) {
-                    doc.addImage(qrCanvas.toDataURL("image/png"), 'PNG', 6, 28, 42, 42);
-                }
-                doc.setLineWidth(0.5);
-                doc.line(5, 74, 49, 74);
+                if (qrCanvas) doc.addImage(qrCanvas.toDataURL("image/png"), 'PNG', 6, 28, 42, 42);
+                doc.setLineWidth(0.5); doc.line(5, 74, 49, 74);
                 doc.text("F+F " + vData.type.toUpperCase(), 27, 81, { align: 'center' });
-                
                 const base64PDF = doc.output('datauristring').split(',')[1];
                 try {
                     await fetch('https://api.printnode.com/printjobs', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Basic ' + btoa(PRINTNODE_API_KEY + ':')
-                        },
-                        body: JSON.stringify({
-                            "printerId": PRINTNODE_PRINTER_ID,
-                            "title": "Badge: " + vData.name,
-                            "contentType": "pdf_base64",
-                            "content": base64PDF,
-                            "source": "F+F Kiosk"
-                        })
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Basic ' + btoa(PRINTNODE_API_KEY + ':') },
+                        body: JSON.stringify({ "printerId": PRINTNODE_PRINTER_ID, "title": "Badge: " + vData.name, "contentType": "pdf_base64", "content": base64PDF, "source": "F+F Kiosk" })
                     });
                 } catch (err) { console.error("Print Error:", err); }
             }, 300);
         }
 
         async function generateContractorPDF(data) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const now = new Date();
-            const timestamp = now.toLocaleDateString() + " " + now.toLocaleTimeString();
-            
-            // GUARANTEE the logo is fully loaded before drawing it
+            const { jsPDF } = window.jspdf; const doc = new jsPDF();
+            const now = new Date(); const timestamp = now.toLocaleDateString() + " " + now.toLocaleTimeString();
             const logoImg = new Image();
-            await new Promise((resolve) => {
-                logoImg.onload = resolve;
-                logoImg.onerror = resolve;
-                logoImg.src = 'assets/newlogo.jpeg';
-            });
-            
+            await new Promise((resolve) => { logoImg.onload = resolve; logoImg.onerror = resolve; logoImg.src = 'assets/newlogo.jpeg'; });
             const allDocsToSign = contractorDocuments.concat(selectedExtraDocs || []);
             allDocsToSign.forEach((docItem, index) => {
                 if (index > 0) doc.addPage();
                 doc.addImage(logoImg, 'PNG', 85, 5, 40, 15); 
-                doc.setFontSize(18);
-                doc.text("Foster + Freeman Contractor Agreement", 105, 30, { align: "center" });
+                doc.setFontSize(18); doc.text("Foster + Freeman Contractor Agreement", 105, 30, { align: "center" });
                 if (data.photoData) doc.addImage(data.photoData, 'JPEG', 160, 40, 30, 40);
-                doc.setFontSize(14); 
-                doc.text(docItem.title, 20, 45);
-                doc.setFontSize(11);
-                const splitText = doc.splitTextToSize(docItem.text, 130);
-                doc.text(splitText, 20, 55);
+                doc.setFontSize(14); doc.text(docItem.title, 20, 45);
+                doc.setFontSize(11); const splitText = doc.splitTextToSize(docItem.text, 130); doc.text(splitText, 20, 55);
                 if (data.workDescription) {
-                    doc.setFontSize(11);
-                    doc.text("Description of Work:", 20, 165);
-                    doc.setFontSize(10);
-                    const splitDesc = doc.splitTextToSize(data.workDescription, 130);
-                    doc.text(splitDesc, 20, 172);
+                    doc.setFontSize(11); doc.text("Description of Work:", 20, 165);
+                    doc.setFontSize(10); const splitDesc = doc.splitTextToSize(data.workDescription, 130); doc.text(splitDesc, 20, 172);
                 }
-                doc.setFontSize(10);
-                doc.text(`Signed by: ${data.name} | Date: ${timestamp}`, 20, 190);
+                doc.setFontSize(10); doc.text(`Signed by: ${data.name} | Date: ${timestamp}`, 20, 190);
                 doc.addImage(data.signature, 'PNG', 130, 185, 50, 20); 
             });
             return doc.output('datauristring').split(',')[1];
         }
 
         async function sendToCloud(data, pdfBase64, action = "SignIn") {
-            try {
-                await fetch(CLOUD_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ ...data, action, pdf: pdfBase64 }) });
-            } catch (err) { console.error("Cloud Error:", err); }
+            try { await fetch(CLOUD_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ ...data, action, pdf: pdfBase64 }) }); } catch (err) { console.error("Cloud Error:", err); }
         }
 
         async function finalizeSignIn() {
             if(signaturePad.isEmpty()) return alert("Please sign the pad.");
-            
             if (!isReturningVisitor) {
                 visitorData = {
                     type: currentVisitorType,
@@ -646,31 +574,20 @@
                 };
             }
             visitorData.signature = signaturePad.toDataURL(); 
-            
             if (!isReturningVisitor) sendToPrintNode(visitorData);
-            
             if (currentVisitorType === 'Contractor') {
                 const video = document.getElementById('face-cam');
                 if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                    const snapCanvas = document.createElement('canvas');
-                    snapCanvas.width = video.videoWidth; snapCanvas.height = video.videoHeight;
-                    const ctx = snapCanvas.getContext('2d');
-                    ctx.translate(snapCanvas.width, 0); ctx.scale(-1, 1);
-                    ctx.drawImage(video, 0, 0, snapCanvas.width, snapCanvas.height);
+                    const snapCanvas = document.createElement('canvas'); snapCanvas.width = video.videoWidth; snapCanvas.height = video.videoHeight;
+                    const ctx = snapCanvas.getContext('2d'); ctx.translate(snapCanvas.width, 0); ctx.scale(-1, 1); ctx.drawImage(video, 0, 0, snapCanvas.width, snapCanvas.height);
                     visitorData.photoData = snapCanvas.toDataURL('image/jpeg', 0.7);
                     document.getElementById('face-guide').style.borderColor = '#28a745';
                 }
             }
-            
             document.getElementById('thankyou-msg').innerText = `Thank you ${visitorData.name}, Welcome to F+F`;
             showScreen('thankyou-screen');
-            
-            let pdfStr = null;
-            if (!isReturningVisitor && visitorData.type === 'Contractor') {
-                pdfStr = await generateContractorPDF(visitorData);
-            }
+            let pdfStr = (!isReturningVisitor && visitorData.type === 'Contractor') ? await generateContractorPDF(visitorData) : null;
             sendToCloud(visitorData, pdfStr, "SignIn");
-            
             setTimeout(() => { showScreen('home-screen'); signaturePad.clear(); }, 3000);
         }
 
@@ -678,21 +595,22 @@
             scanMode = mode;
             document.getElementById('scan-title').innerText = (mode === 'SignOut') ? "Sign Out" : "Re-Sign In";
             document.getElementById('safety-reminder-out').style.display = (mode === 'SignOut') ? "block" : "none";
+            
+            // Set translation key for manual button
+            const manualBtn = document.getElementById('manual-scan-btn');
+            manualBtn.setAttribute('data-i18n', (mode === 'SignOut') ? 'confirm_out' : 're_sign_in');
+            
             showScreen('scan-screen');
             html5QrCode = new Html5Qrcode("reader");
-            try { await html5QrCode.start({ facingMode: "user" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (text) => handleScanResult(text));
-            } catch (err) {}
+            try { await html5QrCode.start({ facingMode: "user" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (text) => handleScanResult(text)); } catch (err) {}
         }
 
-        function stopScanner() { 
-            if (html5QrCode && html5QrCode.isScanning) html5QrCode.stop().then(() => html5QrCode.clear());
-        }
+        function stopScanner() { if (html5QrCode && html5QrCode.isScanning) html5QrCode.stop().then(() => html5QrCode.clear()); }
 
         function handleScanResult(identifier) {
             if (!identifier) return;
             playPing(); stopScanner(); 
             let parts = identifier.split('|'); let name = parts[0];
-            
             if (scanMode === 'SignOut') {
                 sendToCloud({ name: name, type: parts[1] || 'Unknown' }, null, "SignOut");
                 document.getElementById('thankyou-msg').innerText = `Goodbye ${name}!`; 
@@ -702,6 +620,15 @@
                 isReturningVisitor = true;
                 visitorData = { name, type: parts[1], company: parts[2], vehicle: parts[3], contact: parts[4] };
                 document.getElementById('sig-welcome').innerHTML = `Welcome back <strong>${name}</strong>, please sign in.`;
+                
+                // FIXED: Set the button on the signature screen to say "Re-Sign In"
+                const finalBtn = document.getElementById('final-submit-btn');
+                finalBtn.setAttribute('data-i18n', 're_sign_in');
+                
+                // Trigger translation update for just this button
+                const lang = 'en'; // Defaults to English, setLanguage handles current selection logic
+                if(translations[lang]['re_sign_in']) finalBtn.innerText = translations[lang]['re_sign_in'];
+
                 showScreen('signature-screen'); setTimeout(resizeCanvas, 100);
             }
         }
