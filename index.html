@@ -161,6 +161,7 @@
             opacity: 0.4;
             pointer-events: none;
             z-index: 1000;
+            font-weight: bold;
         }
 
         @media print {
@@ -292,7 +293,7 @@
         <p data-i18n="returning_home">Returning to home screen shortly...</p>
     </div>
 
-    <div class="version-text">v1.1.0</div>
+    <div class="version-text">v1.1.1</div>
 
     <script>
         function clearKioskData() {
@@ -342,7 +343,7 @@
             zh: { welcome: "欢迎", safety_notice: "⚠️ 为了疏散程序，必须登记进入和退出。", sign_in: "签到", sign_out: "签退", re_sign_in: "🔄 重新签到 (扫描徽章)", visit_as: "您的访问身份是？", visitor: "访客", contractor: "承包商", back: "返回", next: "下一步", cancel: "取消", name: "全名", company: "公司名称", vehicle: "车牌号", contact: "F+F 联系人", decline: "拒绝", accept: "我接受", extra_tasks: "额外任务", select_permits: "请选择所需的许可证：", work_desc: "工作描述 (必填)...", signature: "签名", sign_below: "请在下方签名：", clear: "清除签名", assist_req: "需要协助", decline_msg: "您已拒绝条款。请在此等候。", safety_out: "请签退以进行人数清点。", scan_qr: "请将徽章二维码对准摄像头", manual_entry: "或手动输入姓名：", confirm_out: "确认签退", thank_you: "谢谢！", returning_home: "即将返回主屏幕..." },
             ja: { welcome: "ようこそ", safety_notice: "⚠️ 避難手順のため、入退館の記録は必須です。", sign_in: "チェックイン", sign_out: "チェックアウト", re_sign_in: "🔄 再入場 (スキャン)", visit_as: "ご来館の目的は？", visitor: "訪問者", contractor: "業者", back: "戻る", next: "次へ", cancel: "キャンセル", name: "氏名", company: "会社名", vehicle: "車両番号", contact: "F+F 担当者", decline: "辞退", accept: "同意する", extra_tasks: "追加タスク", select_permits: "必要な許可証を選択:", work_desc: "作業内容...", signature: "署名", sign_below: "以下に署名してください:", clear: "クリア", assist_req: "係員をお呼びください", decline_msg: "規約に同意されませんでした。お待ちください。", safety_out: "退館スキャンをお願いします。", scan_qr: "QRコードをかざしてください", manual_entry: "または氏名を入力:", confirm_out: "退職を確定する", thank_you: "ありがとうございました", returning_home: "ホームに戻ります..." },
             hi: { welcome: "नमस्ते", safety_notice: "⚠️ निकासी प्रक्रियाओं के लिए साइन इन और आउट करना अनिवार्य है।", sign_in: "साइन इन", sign_out: "साइन आउट", re_sign_in: "🔄 फिर से साइन इन करें", visit_as: "आप किस रूप में आए हैं?", visitor: "आगंतुक", contractor: "ठेकेदार", back: "वापस", next: "आगे", cancel: "रद्द करें", name: "पूरा नाम", company: "कंपनी का नाम", vehicle: "वाहन पंजीकरण", contact: "संपर्क व्यक्ति", decline: "अस्वीकार", accept: "स्वीकार करें", extra_tasks: "अतिरिक्त कार्य", select_permits: "अनुमति चुनें:", work_desc: "कार्य का विवरण...", signature: "हस्ताक्षर", sign_below: "कृपया नीचे हस्ताक्षर करें:", clear: "साफ करें", assist_req: "सहायता की आवश्यकता है", decline_msg: "आपने शर्तों को अस्वीकार कर दिया है।", safety_out: "कृपया साइन आउट करें।", scan_qr: "क्यूआर कोड दिखाएं", manual_entry: "या नाम दर्ज करें:", confirm_out: "साइन आउट की पुष्टि करें", thank_you: "धन्यवाद!", returning_home: "होम स्क्रीन पर वापस जा रहे हैं..." },
-            ur: { welcome: "خوش آمدید", safety_notice: "⚠️ انخلاء کے طریقہ کار کے لیے سائن ان اور آؤٹ کرنا لازمی ہے۔", sign_in: "سائن ان", sign_out: "سائن آؤٹ", re_sign_in: "🔄 دوبارہ سائن ان کریں", visit_as: "آپ کس حیثیت میں آئے ہیں؟", visitor: "وزیٹر", contractor: "ٹھیکیدار", back: "پیچھے", next: "آگے", cancel: "منسوخ کریں", name: "پورا نام", company: "کمپنی کا نام", vehicle: "گاڑی کا نمبر", contact: "رابطہ شخص", decline: "انکار", accept: "قبول ہے", extra_tasks: "اضافی کام", select_permits: "اجازت نامے منتخب کریں:", work_desc: "کام کی تفصیل...", signature: "دستخط", sign_below: "براہ کرم نیچے دستخط کریں:", clear: "صاف کریں", assist_req: "مدد کی ضرورت ہے", decline_msg: "آپ نے شرائط سے انکار کر دیا ہے۔", safety_out: "براہ کرم سائن آؤٹ کریں۔", scan_qr: "کیو آر کوڈ دکھائیں", manual_entry: "یا نام درج کریں:", confirm_out: "سائن آؤٹ کی تصدیق کریں", thank_you: "شکریہ!", returning_home: "ہوم اسکرین پر واپس جا رہے ہیں..." },
+            ur: { welcome: "خوش آمدید", safety_notice: "⚠️ انخلاء کے طریقہ کار کے لیے سائن ان اور آؤٹ کرنا لازمی ہے۔", sign_in: "سائن ان", sign_out: "سائن آؤٹ", re_sign_in: "🔄 دوبارہ سائن ان کریں", visit_as: "آپ کس حیثیت میں آئے ہیں؟", visitor: "وزیٹر", contractor: "ٹھیکیدار", back: "پیچھے", next: "آگے", cancel: "منسوخ کریں", name: "پورا نام", company: "کمپنی का नाम", vehicle: "گاڑی کا نمبر", contact: "رابطہ شخص", decline: "انکار", accept: "قبول ہے", extra_tasks: "اضافی کام", select_permits: "اجازت نامے منتخب کریں:", work_desc: "کام کی تفصیل...", signature: "دستخط", sign_below: "براہ کرم نیچے دستخط کریں:", clear: "صاف کریں", assist_req: "مدد کی ضرورت ہے", decline_msg: "آپ نے شرائط سے انکار کر دیا ہے۔", safety_out: "براہ کرم سائن آؤٹ کریں۔", scan_qr: "کیو آر کوڈ دکھائیں", manual_entry: "یا نام درج کریں:", confirm_out: "سائن آؤٹ کی تصدیق کریں", thank_you: "شکریہ!", returning_home: "ہوم اسکرین پر واپس جا رہے ہیں..." },
             ar: { welcome: "أهلاً بك", safety_notice: "⚠️ تسجيل الدخول والخروج إلزامي لإجراءات الإخلاء.", sign_in: "تسجيل الدخول", sign_out: "تسجيل الخروج", re_sign_in: "🔄 إعادة الدخول (مسح الشارة)", visit_as: "ما هي صفة زيارتك؟", visitor: "زائر", contractor: "مقاول", back: "رجوع", next: "التالي", cancel: "إلغاء", name: "الاسم الكامل", company: "اسم الشركة", vehicle: "رقم السيارة", contact: "شخص الاتصال في F+F", decline: "رفض", accept: "أوافق", extra_tasks: "مهام إضافية", select_permits: "اختر التصاريح المطلوبة لعملك:", work_desc: "وصف العمل (مطلوب)...", signature: "التوقيع", sign_below: "يرجى التوقيع أدناه:", clear: "مسح التوقيع", assist_req: "مساعدة مطلوبة", decline_msg: "لقد رفضت الشروط. يرجى الانتظار هنا.", safety_out: "يرجى تسجيل الخروج ليتم احتسابك.", scan_qr: "ضع رمز QR أمام الكاميرا", manual_entry: "أو أدخل الاسم يدويًا:", confirm_out: "تأكيد الخروج", thank_you: "شكراً لك!", returning_home: "العودة للشاشة الرئيسية..." }
         };
 
@@ -405,12 +406,18 @@
             document.getElementById('document-modal').style.display = 'none';
             
             if (screenId === 'signature-screen') {
-                const faceGuide = document.getElementById('face-guide');
-                faceGuide.style.display = (currentVisitorType === 'Contractor') ? 'block' : 'none';
-                faceGuide.style.borderColor = '#dc3545';
-                navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
-                    .then(stream => { document.getElementById('face-cam').srcObject = stream; })
-                    .catch(err => console.log("Camera blocked."));
+                const cameraContainer = document.getElementById('camera-container');
+                if (currentVisitorType === 'Contractor') {
+                    cameraContainer.style.display = 'block';
+                    const faceGuide = document.getElementById('face-guide');
+                    faceGuide.style.display = 'block';
+                    faceGuide.style.borderColor = '#dc3545';
+                    navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+                        .then(stream => { document.getElementById('face-cam').srcObject = stream; })
+                        .catch(err => console.log("Camera blocked."));
+                } else {
+                    cameraContainer.style.display = 'none';
+                }
             } else {
                 const video = document.getElementById('face-cam');
                 if (video && video.srcObject) {
